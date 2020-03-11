@@ -3,15 +3,12 @@
 
 {% block head %}
 <title>Login</title>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<meta name="google-signin-client_id" content="login-do-sistema-de-documentos.apps.googleusercontent.com">
 {% endblock %}
 
 
 {% block body %}
-<h1 align="center">LOGIN</h1>
-<form align="center" action="/documentos/">
-  <input type="text" placeholder="Usuário" name="user"><br>
-  <input type="password" placeholder="Senha" name="password"><br>
-  <h5> </h5>
-  <input type="submit" value="Entrar">
-</form>
+<h1>Tela de Login</h1>
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
 {% endblock %}
