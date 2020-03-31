@@ -1,4 +1,23 @@
-from flask import Flask, render_template #Bibliotecas e funções utilizadas
+# Imports da biblioteca padrão do Python
+import json
+import os
+import sqlite3
+
+# Import das bibliotecas flask e flask_login
+from flask import Flask, redirect, request, url_for, render_template
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+from oauthlib.oauth2 import WebApplicationClient
+import requests
+
+# Imports dos arquivos locais db.py e user.py
+from db import init_db_command
+from user import User
 
 app = Flask("__name__")
 
@@ -13,7 +32,7 @@ def get_google_provider_cfg():
 
 # Tela inicial do sistema e tela de login
 @app.route('/')
-def login():
+def inicio():
     return render_template('login.html')
 
 # 'Execução' do Login
@@ -59,5 +78,6 @@ def oficio():
 def index():
     return render_template('comunicacao_interna.html')
 
+# Função que inicia o sistema
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)
