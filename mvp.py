@@ -25,13 +25,13 @@ def incio():
 
 # Página na qual o usuário irá informar os dados do documento a ser gerado
 @app.route("/gerardocumento")
-@login_required
+#@login_required
 def docs():
    return render_template('docs.html')
 
 # Página com o histórico de documentos gerados
 @app.route("/meusdocumentos")
-@login_required
+#@login_required
 def myDocs():
     return render_template('myDocs.html')
 
