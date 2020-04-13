@@ -1,4 +1,0 @@
-CREATE TABLE user (
-  id TEXT PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL
-);

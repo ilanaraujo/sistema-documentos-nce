@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Cadastro de Documentos</title>
+{% endblock %}
+
+{% block header %}
+<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
+<li class="sidenav__list-item"><a href="/gerardocumento" class="bottom current">Gerar documentos</a></li>
+<li class="sidenav__list-item"><a href="/meusdocumentos" class="bottom">Documentos</a></li>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+  <form class="form-content">
+    <fieldset id="paper">
+      <div class="page">
+
+        <!-- Área do doc -->
+        <label class="field a-field a-field_a1">
+          <input name="area" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Área do documento" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Área</span>
+          </span>
+        </label>
+
+        <!-- Tipo do doc -->
+        <label class="document-type">
+          <input type="radio" id="oficio" name="tipo" value="1">
+          <label for="1">Ofício</label>
+          <input type="radio" id="carta-externa" name="tipo" value="2">
+          <label for="2">Carta Externa</label>
+          <input type="radio" id="memorando" name="tipo" value="3">
+          <label for="3">Memorando</label>
+          <input type="radio" id="comunicacao-interna" name="tipo" value="4">
+          <label for="4">Comunicação Interna</label>
+        </label>
+
+        <!-- Destinatário do doc -->
+        <label class="field a-field a-field_a2">
+          <input type="text" name="destinatario"
+          class="field__input a-field__input" 
+          placeholder="Destinatário do documento" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Destinatário</span>
+          </span>
+        </label>
+
+        <!-- Assunto do doc -->
+        <label class="field a-field a-field_a2">
+          <input name="assunto" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Assunto do documento" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Assunto</span>
+          </span>
+        </label>
+        
+        <!-- Emissor do doc -->
+        <label class="field a-field a-field_a2">
+          <input name="emissor" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Emissor do documento" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Emissor</span>
+          </span>
+        </label>
+        
+        <label class="field a-field a-field_a2">
+          <input name="cargo" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Cargo do emissor" required>
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Cargo</span>
+          </span>
+        </label>
+        
+        
+        <!-- Corpo da mensagem -->
+
+
+
+
+      </div>
+      
+      
+
+
+
+      <!-- Achar solução melhor kkkkk -->
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    </fieldset>
+  </form>
+  <div id="envelope">
+    <button class="envelope-button">Gerar Documento</button>
+  </div>
+  <div class="envelope__back"></div>
+</div>
+{% endblock %}
