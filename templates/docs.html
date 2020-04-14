@@ -13,7 +13,7 @@
 {% block body %}
 
 <div class="container">
-  <form class="form-content">
+  <form class="form-content" method="POST">
     <fieldset id="paper">
       <div class="page">
 
@@ -82,7 +82,10 @@
           </span>
         </label>
         
-        
+        <!-- Botão para o envio das informações no MVP -->
+        <label class="field a-field a-field_a2">
+          <input type="submit" value="Gerar Documento" class="envelope-button">
+        </label>
         <!-- Corpo da mensagem -->
 
 
@@ -100,7 +103,6 @@
     </fieldset>
   </form>
   <div id="envelope">
-    <button class="envelope-button">Gerar Documento</button>
   </div>
   <div class="envelope__back"></div>
 </div>

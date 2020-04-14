@@ -12,7 +12,31 @@
 
 
 {% block body %}
-<p>meus docs</p>
+<h1 align="center">Documentos Gerados</h1>
+<table border="2" align="center">
+    <tr>
+        <th>Número</th>
+        <th>Tipo</th>
+        <th>Emissor</th>
+        <th>Cargo</th>
+        <th>Área</th>
+        <th>Destinatário</th>
+        <th>Assunto</th>
+        <th>Data</th>
+    </tr>
+    {% for docGerado in documentos %}
+        <tr>
+            <td>{{ docGerado.id }}</td>
+            <td>{{ docGerado.tipo }}</td>
+            <td>{{ docGerado.emissor }}</td>
+            <td>{{ docGerado.cargo }}</td>
+            <td>{{ docGerado.area }}</td>
+            <td>{{ docGerado.destinatario }}</td>
+            <td>{{ docGerado.assunto }}</td>
+            <td>{{ docGerado.data.date() }}</td>
+        </tr>
+    {% endfor %}
+</table>
 {% endblock %}
 
 
