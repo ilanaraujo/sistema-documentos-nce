@@ -1,112 +1,141 @@
-# Imports da biblioteca padrão do Python
-import json
-import os
-import sqlite3
+# Funções importadas da biblioteca padrão do Flask
+from flask import Flask, request, render_template, redirect, url_for, session, make_response
 
-# Imports das bibliotecas flask e flask_login
-from flask import Flask, redirect, request, url_for, render_template
-#from flask_login import (
-#    LoginManager,
-#    current_user,
-#    login_required,
-#    login_user,
-#    logout_user,
-#)
-#from oauthlib.oauth2 import WebApplicationClient
-#import requests
+import pdfkit
 
-# Imports dos arquivos locais db.py e user.py
-#from db import init_db_command
-#from user import User
+# Biblioteca utilizada na manipulação do banco de dados através do Flask
+from flask_sqlalchemy import SQLAlchemy
+
+# Biblioteca utilizada para receber a data direto do sistema
+from datetime import datetime
+
+# Funções importadas da biblioteca Flask-Login
+#from flask_login import LoginManager, UserMixin, login_required, login_user
+
+#from markupsafe import escape
 
 app = Flask("__name__")
-#app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
 
-# User session management setup
-# https://flask-login.readthedocs.io/en/latest
+# Configuração do banco de dados através do SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///documentos.db' #test.db = nome do bd
+db = SQLAlchemy(app)
+
+# Obs: O VS Code aponta erros nessa classe, porém eles não impedem
+# que a aplicação seja executada   
+class documento(db.Model):
+
+    # Atributos que recebem as informações do documento
+    id=db.Column(db.Integer, primary_key=True)
+    emissor=db.Column(db.String(255))
+    cargo=db.Column(db.String(255))
+    area=db.Column(db.String(255))
+    assunto=db.Column(db.String(255))
+    destinatario=db.Column(db.String(255))
+    tipo=db.Column(db.String(255))
+    data=db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Retorna a id do documento que acaba de ser gerado
+    def __repr__(self):
+        return '<docGerado %r>' % self.id
+
 #login_manager = LoginManager()
 #login_manager.init_app(app)
 
-# Naive database setup
-#try:
-#    init_db_command()
-#except sqlite3.OperationalError:
-#    # Assume it's already been created
-#    pass
-
-# OAuth 2 client setup
-#client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
-# Flask-Login helper to retrieve a user from our db
 #@login_manager.user_loader
 #def load_user(user_id):
 #    return User.get(user_id)
 
-# Configuração do sistema de login utilizando a API da Google
-#GOOGLE_CLIENT_ID = os.environ.get("chave", None)
-#GOOGLE_CLIENT_SECRET = os.environ.get("chave", None)
-#GOOGLE_DISCOVERY_URL = ("url")
+# Definindo a chave secreta para usar na sessão
+#app.secret_key = 'chave_privada'
 
-# Função para o login através do Google
-#ef get_google_provider_cfg():
-#    return requests.get(GOOGLE_DISCOVERY_URL).json()
-
-# Tela inicial do sistema e tela de login
+# Página Inicial. Login ainda indisponível
 @app.route("/")
 def incio():
-    return render_template("login.html")
+    return render_template("index.html")
 
-#@app
-# 'Execução' do Login pelo Google
-#@app.route("/logingoogle")
-#def loginGoogle():
-    # Find out what URL to hit for Google login
-    #google_provider_cfg = get_google_provider_cfg()
-    #authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+# Página na qual o usuário irá informar os dados do documento a ser gerado
+@app.route("/gerardocumento", methods=['POST', 'GET'])
+def docs():
+    # Quando um novo documento é gerado
+    if request.method == 'POST':
 
-    # Use library to construct the request for Google login and provide
-    # scopes that let you retrieve user's profile from Google
-#    request_uri = client.prepare_request_uri(
-#        authorization_endpoint,
-#        redirect_uri=request.base_url + "/callback",
-#        scope=["openid", "email", "profile"],
-#    )
-#    return redirect(request_uri)
+        # Recebe as informações passadas pelo usuário no formulário
+        documento_area = request.form['area']
+        documento_tipo = request.form['tipo']
+        documento_emissor = request.form['emissor']
+        documento_destinatario = request.form['destinatario']
+        documento_cargo = request.form['cargo']
+        documento_assunto = request.form['assunto']
 
-# Callback do Login para dar get no código de autorização que o Google enviou
-#@app.route("/login/callback")
-#def callback():
-    # Get authorization code Google sent back to you
-#    code = request.args.get("code")
+        # Variável que armazena as informações do documento gerado
+        docGerado = documento(
+            area = documento_area,
+            tipo = documento_tipo,
+            emissor = documento_emissor,
+            destinatario = documento_destinatario,
+            cargo = documento_cargo,
+            assunto = documento_assunto
+        )
 
-# Find out what URL to hit to get tokens that allow you to ask for
-# things on behalf of a user
-#google_provider_cfg = get_google_provider_cfg()
-#token_endpoint = google_provider_cfg["token_endpoint"]
+        # Salva as informações do novo documento no 
+        # BD e redireciona para o histórico
+        try:
+            db.session.add(docGerado)
+            db.session.commit()
+            return redirect('/meusdocumentos')
 
-# Tela com o histórico com todos os documentos gerados que o usuário pode visualizar e editar
-#@app.route('/historico')
-#def historico():
-#    return render_template('historico.html')
+        # Caso ocorra um erro com o BD
+        except:
+            return 'Occorreu um erro ao salvar o documento'
 
-# Tela com a seleção do tipo de documento a ser gerado
-#@app.route('/menu')
-#def menu():
-#    if current_user.is_authenticated:
-#        return render_template('menu.html')
-#    else:
-#        return "Ocorreu um erro"
+    # Quando a página é acessada
+    else:
+        return render_template('docs.html')
 
-# Tela para a criação de um ofício
-#@app.route('/documentos/oficio')
-#def oficio():
-#    return render_template('oficio.html')
+# Página com o histórico de documentos gerados
+@app.route("/meusdocumentos", methods=['POST', 'GET'])
+def myDocs():
 
-# Tela para a criação de uma Comunicação Interna
-#@app.route('/documentos/comunicacao_interna')
-#def index():
-#    return render_template('comunicacao_interna.html')
+    # Variável que armazena todos os documentos e os
+    # disponibiliza na ordem que foram gerados 
+    documentos = documento.query.order_by(documento.id).all()
 
-# Função que inicia o sistema
+    return render_template('myDocs.html', documentos = documentos)
+
+# Página para alterações em um documento
+@app.route('/editar/<int:id>', methods=['GET', 'POST'])
+def editar(id):
+    docGerado = documento.query.get_or_404(id)
+    if request.method == 'POST':
+        docGerado.area = request.form['area']
+        docGerado.emissor = request.form['emissor']
+        docGerado.destinatario = request.form['destinatario']
+        docGerado.cargo = request.form['cargo']
+        docGerado.assunto = request.form['assunto']
+
+        try:
+            db.session.commit()
+            return redirect('/meusdocumentos')
+
+        # Caso ocorra um erro com o BD
+        except:
+            return 'Occorreu um erro ao editar o documento'
+    else:
+        return render_template('editar.html', documento = docGerado)
+
+@app.route('/baixar/<int:id>')
+def baixar(id):
+    docGerado = documento.query.get_or_404(id)
+    res = render_template('modeloOficio.html', docGerado = docGerado)
+    responsestring = pdfkit.from_string(res, False)
+    response = make_response(responsestring)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline;filename = output.pdf'
+    return response
+
+# Função que inicia a aplicação
 if __name__ == "__main__":
+
+    # Com essas configurações o endereço para utilizar a aplicação
+    # no navegador sempre será "localhost:5000" 
     app.run(host="localhost", port=5000, debug=True)
