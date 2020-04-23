@@ -30,14 +30,10 @@
 
         <!-- Tipo do doc -->
         <label class="document-type">
-          <input type="radio" id="oficio" name="tipo" value="1">
-          <label for="1">Ofício</label>
-          <input type="radio" id="carta-externa" name="tipo" value="2">
-          <label for="2">Carta Externa</label>
-          <input type="radio" id="memorando" name="tipo" value="3">
-          <label for="3">Memorando</label>
-          <input type="radio" id="comunicacao-interna" name="tipo" value="4">
-          <label for="4">Comunicação Interna</label>
+          <input type="radio" id="oficio" name="tipo" value="oficio">
+          <label for="oficio ">Ofício</label>
+          <input type="radio" id="comunicacao-interna" name="tipo" value="comunicacao-interna">
+          <label for="comunicacao-interna">Comunicação Interna</label>
         </label>
 
         <!-- Destinatário do doc -->
@@ -83,9 +79,6 @@
         </label>
         
         <!-- Botão para o envio das informações no MVP -->
-        <label class="field a-field a-field_a2">
-          <input type="submit" value="Gerar Documento" class="envelope-button">
-        </label>
         <!-- Corpo da mensagem -->
 
 
@@ -101,9 +94,12 @@
       <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
     </fieldset>
-  </form>
   <div id="envelope">
+    <label class="field a-field a-field_a2">
+      <input type="submit" value="Gerar Documento" class="envelope-button">
+    </label>
   </div>
   <div class="envelope__back"></div>
+</form>
 </div>
 {% endblock %}

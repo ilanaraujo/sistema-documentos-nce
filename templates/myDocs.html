@@ -15,7 +15,7 @@
 <h1 align="center">Documentos Gerados</h1>
 <table border="2" align="center">
     <tr>
-        <th>Número</th>
+        <th>Id</th>
         <th>Tipo</th>
         <th>Emissor</th>
         <th>Cargo</th>
@@ -23,6 +23,7 @@
         <th>Destinatário</th>
         <th>Assunto</th>
         <th>Data</th>
+        <th>Opções</th>
     </tr>
     {% for docGerado in documentos %}
         <tr>
@@ -34,6 +35,11 @@
             <td>{{ docGerado.destinatario }}</td>
             <td>{{ docGerado.assunto }}</td>
             <td>{{ docGerado.data.date() }}</td>
+            <td>
+                <a href="/editar/{{docGerado.id}}">Editar</a>
+                <br>
+                <a href="/baixar/{{docGerado.id}}">Baixar</a>
+            </td>
         </tr>
     {% endfor %}
 </table>
