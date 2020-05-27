@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<title>Cadastro de Documentos</title>
+<title>Cadastro de Usuários</title>
 {% endblock %}
 
 {% block header %}
@@ -17,68 +17,70 @@
     <fieldset id="paper">
       <div class="page">
 
-        <!-- Área do doc -->
+        <!-- email -->
         <label class="field a-field a-field_a1">
-          <input name="area" type="text" 
+          <input name="email" type="text" 
           class="field__input a-field__input" 
-          placeholder="Área do documento" required>
+          placeholder="E-mail do Usuário" required>
 
           <span class="a-field__label-wrap">
-            <span class="a-field__label">Área</span>
+            <span class="a-field__label">E-mail</span>
           </span>
         </label>
 
-        <!-- Tipo do doc -->
-        <label class="document-type">
-          <input type="radio" id="oficio" name="tipo" value="oficio">
-          <label for="Ofício">Ofício</label>
-          <input type="radio" id="comunicacao-interna" name="tipo" value="comunicacao-interna">
-          <label for="Comunicação Interna">Comunicação Interna</label>
-        </label>
-
-        <!-- Destinatário do doc -->
+        <!-- senha -->
         <label class="field a-field a-field_a2">
-          <input type="text" name="destinatario"
+          <input name="senha" type="password" 
           class="field__input a-field__input" 
-          placeholder="Destinatário do documento" required>
+          placeholder="Senha do Usuário" required>
 
           <span class="a-field__label-wrap">
-            <span class="a-field__label">Destinatário</span>
-          </span>
-        </label>
-
-        <!-- Assunto do doc -->
-        <label class="field a-field a-field_a2">
-          <input name="assunto" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Assunto do documento" required>
-
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Assunto</span>
+            <span class="a-field__label">Senha do Usuário</span>
           </span>
         </label>
         
-        <!-- Emissor do doc -->
+        <!-- nome -->
         <label class="field a-field a-field_a2">
-          <input name="emissor" type="text" 
+          <input name="nome" type="text" 
           class="field__input a-field__input" 
-          placeholder="Emissor do documento" required>
+          placeholder="Nome Completo" required>
 
           <span class="a-field__label-wrap">
-            <span class="a-field__label">Emissor</span>
+            <span class="a-field__label">Nome Completo</span>
           </span>
         </label>
         
+        <!-- cargo -->
         <label class="field a-field a-field_a2">
           <input name="cargo" type="text" 
           class="field__input a-field__input" 
-          placeholder="Cargo do emissor" required>
+          placeholder="Cargo do Usuário" required>
           <span class="a-field__label-wrap">
-            <span class="a-field__label">Cargo</span>
+            <span class="a-field__label">Cargo do Usuário</span>
           </span>
         </label>
-        
-        <!-- Botão para o envio das informações no MVP -->
+
+        <!-- area -->
+        <label class="field a-field a-field_a2">
+            <input name="area" type="text" 
+            class="field__input a-field__input" 
+            placeholder="Área do Usuário" required>
+            <span class="a-field__label-wrap">
+              <span class="a-field__label">Área do Usuário</span>
+            </span>
+          </label>
+
+        <!-- divisao -->
+        <label class="field a-field a-field_a2">
+            <input name="divisao" type="text" 
+            class="field__input a-field__input" 
+            placeholder="Divisão do Usuário" required>
+            <span class="a-field__label-wrap">
+              <span class="a-field__label">Divisão do Usuário</span>
+            </span>
+          </label>
+   
+
         <!-- Corpo da mensagem -->
 
 
@@ -96,7 +98,7 @@
     </fieldset>
   <div id="envelope">
     <label class="field a-field a-field_a2">
-      <input type="submit" value="Gerar Documento" class="envelope-button">
+      <input type="submit" value="Criar Usuário" class="envelope-button">
     </label>
   </div>
   <div class="envelope__back"></div>

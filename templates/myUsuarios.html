@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Cadastro de Documentos</title>
+{% endblock %}
+
+{% block header %}
+<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
+<li class="sidenav__list-item"><a href="/gerardocumento" class="bottom">Gerar documentos</a></li>
+<li class="sidenav__list-item"><a href="/meusdocumentos" class="bottom current">Documentos</a></li>
+{% endblock %}
+
+
+{% block body %}
+<h1 align="center">Documentos Gerados</h1>
+<table border="2" align="center">
+    <tr>
+        <th>e-mail</th>
+        <th>Nome</th>
+        <th>Cargo</th>
+        <th>Área</th>
+        <th>Divisão</th>
+    </tr>
+    {% for userCriado in usuarios %}
+        <tr>
+            <td>{{ userCriado.email }}</td>
+            <td>{{ userCriado.nome }}</td>
+            <td>{{ userCriado.cargo }}</td>
+            <td>{{ userCriado.area }}</td>
+            <td>{{ userCriado.divisão }}</td>
+            <td>
+                <a href="">Alterar</a>
+                <br>
+                {% if userCriado.status == 'True' %}
+                <a href="">Inativar</a>
+                {% endif %}
+                {% if userCriado.status == 'False' %}
+                <a href="">Ativar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
+
