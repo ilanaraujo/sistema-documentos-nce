@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Editar Documento</title>
+{% endblock %}
+
+{% block header %}
+<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
+<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
+<li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
+<li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
+<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
+<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
+<li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
+<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+  <form class="form-content" method="POST">
+    <fieldset id="paper">
+      <div class="page">
+
+        <!-- Área do doc -->
+        <label class="field a-field a-field_a1">
+          <input name="area" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Área do documento" value="{{documento.area}}" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Área</span>
+          </span>
+        </label>
+
+        <!-- Destinatário do doc -->
+        <label class="field a-field a-field_a2">
+          <input type="text" name="destinatario"
+          class="field__input a-field__input" 
+          placeholder="Destinatário do documento" value="{{documento.destinatario}}" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Destinatário</span>
+          </span>
+        </label>
+
+        <!-- Assunto do doc -->
+        <label class="field a-field a-field_a2">
+          <input name="assunto" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Assunto do documento" value="{{documento.assunto}}" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Assunto</span>
+          </span>
+        </label>
+        
+        <!-- Emissor do doc -->
+        <label class="field a-field a-field_a2">
+          <input name="emissor" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Emissor do documento" value="{{documento.emissor}}" required>
+
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Emissor</span>
+          </span>
+        </label>
+        
+        <label class="field a-field a-field_a2">
+          <input name="cargo" type="text" 
+          class="field__input a-field__input" 
+          placeholder="Cargo do emissor" value="{{documento.cargo}}" required>
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">Cargo</span>
+          </span>
+        </label>
+        
+        <!-- Corpo da mensagem -->
+
+
+
+
+      </div>
+      
+      
+
+
+
+      <!-- Achar solução melhor kkkkk -->
+      <br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    </fieldset>
+    <div id="envelope">
+      <label class="field a-field a-field_a2">
+        <input type="submit" value="Editar Documento" class="envelope-button">
+      </label>
+    </div>
+    <div class="envelope__back"></div>
+  </form>
+  </div>
+{% endblock %}

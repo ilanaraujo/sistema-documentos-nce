@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Cadastro de Documentos</title>
+{% endblock %}
+
+{% block header %}
+<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
+<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
+<li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
+<li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
+<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
+<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
+{% if novo %}
+<li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
+<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom current">Lista de Usuários Novos</a></li>
+{% else %}
+<li class="sidenav__list-item"><a href="/listausuarios" class="bottom current">Lista de Usuários</a></li>
+<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
+{% endif %}
+{% endblock %}
+
+
+{% block body %}
+<h1 align="center">Documentos Gerados</h1>
+<table border="2" align="center">
+    <tr>
+        <th>e-mail</th>
+        <th>Nome</th>
+		<th>Nível do Cargo</th>
+        <th>Cargo</th>
+        <th>Área</th>
+        <th>Divisão</th>
+    </tr>
+    {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.nome }}</td>
+            <td>{{ usuario.cargo }}</td>
+			<td>{{ usuario.nivelCargo }}</td>
+            <td>{{ usuario.area }}</td>
+            <td>{{ usuario.divisão }}</td>
+            <td>
+                <a href="">Alterar Dados</a>
+                <br>
+                {% if novo %}
+				<a href="">Aprovar Cadastro</a>
+				<br>
+				<a href="">Reprovar Cadastro</a>
+				{% else %}
+				{% if usuario.status %}
+				<a href="">Inativar</a>
+				{% else %}
+				<a href="">Ativar</a>
+                {% endif %}
+				{% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
+

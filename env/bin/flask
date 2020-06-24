@@ -1,4 +1,4 @@
-#!/home/ilanrochaaraujo/sistema-documentos-nce/env/bin/python3
+#!/home/ilanrochaaraujo/sistema-documentos-nce/env/bin/python2
 # -*- coding: utf-8 -*-
 import re
 import sys

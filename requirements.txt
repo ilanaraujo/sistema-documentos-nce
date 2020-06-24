@@ -5,3 +5,6 @@ pyOpenSSL
 Flask-Login
 flask_sqlalchemy
 pdfkit
+wkhtmltopdf
+Flask-WTF
+flask_wtf
