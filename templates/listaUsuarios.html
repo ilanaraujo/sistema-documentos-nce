@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block head %}
-<title>Cadastro de Documentos</title>
+{% if novo %}
+<title>Usuários Pendentes</title>
+{% else %}
+<title>Usuários Cadastrados</title>
+{% endif %}
 {% endblock %}
 
 {% block header %}
@@ -22,7 +26,11 @@
 
 
 {% block body %}
-<h1 align="center">Documentos Gerados</h1>
+{% if novo %}
+<h1 align="center">Usuários Pendentes</h1>
+{% else %}
+<h1 align="center">Usuários Cadastrados</h1>
+{% endif %}
 <table border="2" align="center">
     <tr>
         <th>e-mail</th>
