@@ -43,25 +43,25 @@
         <th>Opções</th>
     </tr>
     {% for doc in documentos %}
-        <tr>
-            <td>{{ doc.id }}</td>
-            <td>{{ doc.emissor }}</td>
-            <td>{{ doc.cargo }}</td>
-            <td>{{ doc.area }}</td>
-            <td>{{ doc.destinatario }}</td>
-            <td>{{ doc.assunto }}</td>
-            <td>{{ doc.data.date() }}</td>
-            <td>
-				{% if tipo == "oficio" %}
-                <a href="/editaroficio/{{doc.id}}">Editar</a>
-                <br>
-                <a href="/baixaroficio/{{doc.id}}">Baixar</a>
-				{% else %}
-				<a href="/editarcomunicacaointerna/{{doc.id}}">Editar</a>
-				<br>
-				<a href="/baixarcomunicacaointerna/{{doc.id}}">Baixar</a>
-				{% endif %}
-            </td>
+    <tr>
+        <td>{{ doc.id }}</td>
+        <td>{{ doc.emissor }}</td>
+        <td>{{ doc.cargo }}</td>
+        <td>{{ doc.area }}</td>
+        <td>{{ doc.destinatario }}</td>
+        <td>{{ doc.assunto }}</td>
+        <td>{{ doc.data.date() }}</td>
+        <td>
+	{% if tipo == "oficio" %}
+        <a href="/editaroficio/{{doc.id}}">Editar</a>
+ 	<br>
+        <a href="/baixaroficio/{{doc.id}}">Baixar</a>
+	{% else %}
+	<a href="/editarcomunicacaointerna/{{doc.id}}">Editar</a>
+		<br>
+		<a href="/baixarcomunicacaointerna/{{doc.id}}">Baixar</a>
+	{% endif %}
+        </td>
         </tr>
     {% endfor %}
 </table>

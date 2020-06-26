@@ -27,33 +27,34 @@
     <tr>
         <th>e-mail</th>
         <th>Nome</th>
-		<th>Nível do Cargo</th>
+	<th>Nível do Cargo</th>
         <th>Cargo</th>
         <th>Área</th>
         <th>Divisão</th>
+	<th>Opções</th>
     </tr>
     {% for usuario in usuarios %}
         <tr>
             <td>{{ usuario.email }}</td>
             <td>{{ usuario.nome }}</td>
-            <td>{{ usuario.cargo }}</td>
-			<td>{{ usuario.nivelCargo }}</td>
+            <td>{{ usuario.cargo }}</td>	
+	    <td>{{ usuario.nivelCargo }}</td>
             <td>{{ usuario.area }}</td>
-            <td>{{ usuario.divisão }}</td>
+            <td>{{ usuario.divisao }}</td>
             <td>
-                <a href="">Alterar Dados</a>
-                <br>
                 {% if novo %}
-				<a href="">Aprovar Cadastro</a>
-				<br>
-				<a href="">Reprovar Cadastro</a>
-				{% else %}
-				{% if usuario.status %}
-				<a href="">Inativar</a>
-				{% else %}
-				<a href="">Ativar</a>
+		<a href="/aprovarusuario/{{usuario.id}}">Aprovar Cadastro</a>
+		<br>
+		<a href="/reprovarusuario/{{usuario.id}}">Reprovar Cadastro</a>
+		{% else %}
+		<a href="/editarusuario/{{usuario.id}}">Alterar Dados</a>
+		<br>
+		{% if usuario.status %}
+		<a href="/inativarusuario/{{usuario.id}}">Inativar</a>
+		{% else %}
+		<a href="/ativarusuario/{{usuario.id}}">Ativar</a>
                 {% endif %}
-				{% endif %}
+		{% endif %}
             </td>
         </tr>
     {% endfor %}

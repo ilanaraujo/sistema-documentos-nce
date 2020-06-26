@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block head %}
+{% if novo %}
 <title>Cadastro de Usuários</title>
+{% else %}
+<title>Alteração de Usuário</title>
+{% endif %}
 {% endblock %}
 
 {% block header %}
@@ -10,7 +14,11 @@
 <li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
 <li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
 <li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
+{% if novo %}
 <li class="sidenav__list-item"><a href="/criarusuario" class="bottom current">Criar Usuário</a></li>
+{% else %}
+<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
+{% endif %}
 <li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
 <li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
 {% endblock %}
@@ -43,7 +51,7 @@
             <span class="a-field__label">Senha do Usuário</span>
           </span>
         </label>
-        
+
         <!-- nome -->
         <label class="field a-field a-field_a2">
           <input name="nome" type="text" 
@@ -101,18 +109,7 @@
               <span class="a-field__label">Divisão do Usuário</span>
             </span>
           </label>
-   
-
-        <!-- Corpo da mensagem -->
-
-
-
-
       </div>
-      
-      
-
-
 
       <!-- Achar solução melhor kkkkk -->
       <br><br><br><br><br><br><br><br><br><br>

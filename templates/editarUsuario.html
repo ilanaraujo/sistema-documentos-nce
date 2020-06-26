@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block head %}
-<title>Editar Documento</title>
+{% if novo %}
+<title>Cadastro de Usuários</title>
+{% else %}
+<title>Alteração de Usuário</title>
+{% endif %}
 {% endblock %}
 
 {% block header %}
@@ -10,7 +14,11 @@
 <li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
 <li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
 <li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
+{% if novo %}
+<li class="sidenav__list-item"><a href="/criarusuario" class="bottom current">Criar Usuário</a></li>
+{% else %}
 <li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
+{% endif %}
 <li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
 <li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
 {% endblock %}
@@ -22,80 +30,79 @@
     <fieldset id="paper">
       <div class="page">
 
-        <!-- Área do doc -->
-        <label class="field a-field a-field_a1">
-          <input name="area" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Área do documento" value="{{documento.area}}" required>
-
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Área</span>
-          </span>
-        </label>
-
-        <!-- Destinatário do doc -->
+        <!-- nome -->
         <label class="field a-field a-field_a2">
-          <input type="text" name="destinatario"
+          <input name="nome" type="text" 
           class="field__input a-field__input" 
-          placeholder="Destinatário do documento" value="{{documento.destinatario}}" required>
+	  placeholder="Nome Completo" value="{{user.nome}}" required>
 
           <span class="a-field__label-wrap">
-            <span class="a-field__label">Destinatário</span>
-          </span>
-        </label>
-
-        <!-- Assunto do doc -->
-        <label class="field a-field a-field_a2">
-          <input name="assunto" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Assunto do documento" value="{{documento.assunto}}" required>
-
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Assunto</span>
+            <span class="a-field__label">Nome Completo</span>
           </span>
         </label>
         
-        <!-- Emissor do doc -->
-        <label class="field a-field a-field_a2">
-          <input name="emissor" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Emissor do documento" value="{{documento.emissor}}" required>
+	<!-- Nível do cargo -->
+	<label class="document-type" align="left">
+	  <a>Tipo de Cargo</a>
+	  <br>
+	  <input type="radio" id="direcaoGeral" name="nivelCargo" value="1">
+	  <label for="direcaoGeral" {% if user.nivelCargo == "direcaoGeral" %}
+	  checked {% endif %}>Direção Geral</label>
+	  <br>
+	  <input type="radio" id="direcaoArea" name="nivelCargo" value="2">
+	  <label for="direcaoArea" {% if user.nivelCargo == "" %}
+	  checked {% endif %}>Direção de Área</label>
+	  <br>
+	  <input type="radio" id="chefiaDivisao" name="nivelCargo" value="3">
+	  <label for="chefiaDivisao" {% if user.nivelCargo == "" %}
+	  checked {% endif %}>Chefia de Divisão</label>
+	  <br>
+	  <input type="radio" id="funcionario" name="nivelCargo" value="4">
+	  <label for="funcionario" {% if user.nivelCargo == "" %}
+	  checked {% endif %}>Outro</label>
+	</label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Emissor</span>
-          </span>
-        </label>
-        
+        <!-- cargo -->
         <label class="field a-field a-field_a2">
           <input name="cargo" type="text" 
           class="field__input a-field__input" 
-          placeholder="Cargo do emissor" value="{{documento.cargo}}" required>
+	  placeholder="Cargo do Usuário" value="{{user.cargo}}" required>
           <span class="a-field__label-wrap">
-            <span class="a-field__label">Cargo</span>
+            <span class="a-field__label">Cargo do Usuário</span>
           </span>
         </label>
-        
-        <!-- Corpo da mensagem -->
 
+        <!-- area -->
+        <label class="field a-field a-field_a2">
+            <input name="area" type="text" 
+            class="field__input a-field__input" 
+	    placeholder="Área do Usuário" required value="{{user.area}}">
+            <span class="a-field__label-wrap">
+              <span class="a-field__label">Área do Usuário</span>
+            </span>
+          </label>
 
-
-
+        <!-- divisao -->
+        <label class="field a-field a-field_a2">
+            <input name="divisao" type="text" 
+            class="field__input a-field__input" 
+	    placeholder="Divisão do Usuário" required value="{{user.divisao}}">
+            <span class="a-field__label-wrap">
+              <span class="a-field__label">Divisão do Usuário</span>
+            </span>
+          </label>
       </div>
-      
-      
-
-
 
       <!-- Achar solução melhor kkkkk -->
-      <br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <br><br><br><br><br><br><br><br><br><br>
 
     </fieldset>
-    <div id="envelope">
-      <label class="field a-field a-field_a2">
-        <input type="submit" value="Editar Documento" class="envelope-button">
-      </label>
-    </div>
-    <div class="envelope__back"></div>
-  </form>
+  <div id="envelope">
+    <label class="field a-field a-field_a2">
+      <input type="submit" value="Criar Usuário" class="envelope-button">
+    </label>
   </div>
+  <div class="envelope__back"></div>
+</form>
+</div>
 {% endblock %}

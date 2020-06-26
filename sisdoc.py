@@ -331,14 +331,89 @@ def criarUsuario():
         return render_template('criarUsuario.html')
 
 @app.route('/listausuarios', methods=['POST', 'GET'])
-def listausuarios(): 
+def listausuarios():
     usuarios = usuario.query.order_by(usuario.id).all()
     return render_template('listaUsuarios.html', usuarios = usuarios, novo=False)
+
+@app.route('/editarusuario/<int:id>', methods=['POST', 'GET'])
+def editarUsuario(id):
+    usuarioEditado = usuario.query.get_or_404(id)
+    if request.method == 'POST':
+        usuarioEditado.nome = request.form['nome']
+        usuarioEditado.nivelCargo = request.form['nivelCargo']
+        usuarioEditado.cargo = request.form['cargo']
+        usuarioEditado.area = request.form['area']
+        usuarioEditado.divisao = request.form['divisao']
+        try:
+            db.session.commit()
+            return redirect('/listausuarios')
+        except:
+            return 'Ocorreu um erro ao editar o usuário.'
+    else:
+        return render_template('editarUsuario.html', user = usuarioEditado)
+
+@app.route('/inativarusuario/<int:id>')
+def inativarUsuario(id):
+    usuarioAtivo = usuario.query.get_or_404(id)
+    usuarioAtivo.status = False
+    try:
+        db.session.commit()
+        # Envia um e-mail pro usuário informando
+        # que ele foi inativado
+        return redirect('/listausuarios')
+    except:
+        return "Ocorreu um erro ao inativar o usuário"
+
+@app.route('/ativarusuario/<int:id>')
+def ativarUsuario(id):
+    usuarioInativo = usuario.query.get_or_404(id)
+    usuarioInativo.status = True
+    try:
+        db.session.commit()
+        # Envia um email pro usuário informando
+        # que ele foi ativado
+        return redirect('/listausuarios')
+    except:
+        return "Ocorreu um erro ao ativar o usuario"
 
 @app.route('/listausuariosnovos', methods=['GET', 'POST'])
 def listaUsuariosNovos():
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
     return render_template('listaUsuarios.html', usuarios = usuarios, novo=True)
+
+@app.route('/aprovarusuario/<int:id>')
+def aprovarUsuario(id):
+    usuarioAprovado = usuarioNovo.query.get_or_404(id)
+    usuarioAprovadoNovo = usuario(
+        email = usuarioAprovado.email,
+        senha = usuarioAprovado.senha,
+        nome = usuarioAprovado.senha,
+        nivelCargo = usuarioAprovado.nivelCargo,
+        area = usuarioAprovado.area,
+        divisao = usuarioAprovado.divisao
+    )
+    try:
+        db.session.add(usuarioAprovadoNovo)
+        db.session.delete(usuarioAprovado)
+        db.session.commit()
+        # Envia um e-mail pro usuário informando que ele foi aprovado
+        # e que já pode usar o sistema de documentos.
+        return redirect('/listausuariosnovos')
+    except:
+        return "Ocorreu um erro ao aprovar o usuário."
+
+@app.route('/reprovarusuario/<int:id>')
+def reprovarUsuario(id):
+    usuarioReprovado = usuarioNovo.query.get_or_404(id)
+    try:
+        db.session.delete(usuarioReprovado)
+        db.session.commit()
+        # Adicionar página pra selecionar os campos preenchidos incorretamente
+        # Envia um e-mail pro usuário informando que ele foi reprovado
+        # e os campos que estão errados.
+        return redirect('/listausuariosnovos')
+    except:
+        return "Ocorreu um erro ao reprovar o usuário"
 
 # Função que inicia a aplicação
 if __name__ == "__main__":
