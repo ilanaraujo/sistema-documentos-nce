@@ -33,21 +33,23 @@ app.config['SQLALCHEMY_BINDS'] = {'comInterna' : 'sqlite:///comInternas.db',
 # Variável que gerencia o Banco de Dados
 db = SQLAlchemy(app)
 
+
+# Configuração do Flask-Mail
+app.config['DEBUG']= True
+app.config['TESTING'] = False
+app.config['MAIL_SERVER'] = 'smtp.google.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = #email do adm
+app.config['MAIL_PASSWORD'] = #senha do adm
+app.config['MAIL_DEFAULT_SENDER'] = None
+app.config['MAIL_MAX_EMAILS'] = None 
+app.config['MAIL_ASCII_ATTACHEMENTS'] = False
+
 # Variável que gerencia a biblioteca Flask-Mail
 #mail = Mail(app)
 
-# Configuração do Flask-Mail
-#app.config['DEBUG']= True
-#app.config['TESTING'] = False
-#app.config['MAIL_SERVER'] = 'localhost'
-#app.config['MAIL_PORT'] = 25
-#app.config['MAIL_USE_TLS'] = False
-#app.config['MAIL_USE_SSL'] = False
-#app.config['MAIL_USERNAME'] = None
-#app.config['MAIL_PASSWORD'] = None
-#app.config['MAIL_DEFAULT_SENDER'] = None
-#app.config['MAIL_MAX_EMAILS'] = None 
-#app.config['MAIL_ASCII_ATTACHEMENTS'] = False
 
 # Usuários aprovados pelo administrador
 class usuario(db.Model):
@@ -377,6 +379,11 @@ def inativarUsuario(id):
     usuarioAtivo = usuario.query.get_or_404(id)
     usuarioAtivo.status = False
     try:
+        msg = Message('Ativação no sistema', recipients= [usuarioInativo.email])
+        msg.body = 'Olá sr/sra. %s, seu cadastro com o email:%s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'%(usuarioInativo.nome,usuarioInativo.email)'
+        mail.send(msg)msg = Message('Aprovação do cadastro', recipients= [usuarioInativo.email])
+        msg.body = 'Olá sr/sra. %s, seu cadastro com o email:%s  foi aprovado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'%(usuarioInativo.nome,usuarioInativo.email)'
+        mail.send(msg)
         db.session.commit()
         # Envia um e-mail pro usuário informando
         # que ele foi inativado
@@ -389,7 +396,13 @@ def ativarUsuario(id):
     usuarioInativo = usuario.query.get_or_404(id)
     usuarioInativo.status = True
     try:
+        msg = Message('Ativação no sistema', recipients= [usuarioInativo.email])
+        msg.body = 'Olá sr/sra. %s, seu cadastro com o email:%s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'%(usuarioInativo.nome,usuarioInativo.email)'
+        mail.send(msg)msg = Message('Aprovação do cadastro', recipients= [usuarioInativo.email])
+        msg.body = 'Olá sr/sra. %s, seu cadastro com o email:%s  foi aprovado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'%(usuarioInativo.nome,usuarioInativo.email)'
+        mail.send(msg)
         db.session.commit()
+        
         # Envia um email pro usuário informando
         # que ele foi ativado
         return redirect('/listausuarios')
@@ -413,9 +426,9 @@ def aprovarUsuario(id):
         divisao = usuarioAprovado.divisao
     )
     try:
-        #msg = Message('Aprovação do cadastro', recipients= [usuarioNovo.email])
-        #msg.body = 'Olá sr/sra. %s, seu cadastro com o email:%s  foi aprovado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'%(usuarioNovo.nome,usuarioNovo.email)'
-        #mail.send(msg)
+        msg = Message('Aprovação do cadastro', recipients= [usuarioNovo.email])
+        msg.body = 'Olá sr/sra. %s, seu cadastro com o email:%s  foi aprovado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'%(usuarioNovo.nome,usuarioNovo.email)'
+        mail.send(msg)
         db.session.add(usuarioAprovadoNovo)
         db.session.delete(usuarioAprovado)
         db.session.commit()
@@ -430,9 +443,9 @@ def aprovarUsuario(id):
 def reprovarUsuario(id):
     usuarioReprovado = usuarioNovo.query.get_or_404(id)
     try:
-        #msg = mail('Cadastro reprovado.', recipients=[usuarioNovo.email])
-        #msg.body = ('Seu cadastro foi reprovado pelos seguintes erros:\n %s' %{{form.cadastroReprovado}})
-        #mail.send(msg)
+        msg = mail('Cadastro reprovado.', recipients=[usuarioNovo.email])
+        msg.body = ('Seu cadastro foi reprovado pelos seguintes erros:\n %s' %{{form.cadastroReprovado}})
+        mail.send(msg)
         db.session.delete(usuarioReprovado)
         db.session.commit()
         # Adicionar página pra selecionar os campos preenchidos incorretamente
