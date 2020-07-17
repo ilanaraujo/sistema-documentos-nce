@@ -1,7 +1,11 @@
 # Funções importadas da biblioteca padrão do Flask
-from flask import Flask, request, render_template, redirect, url_for, session, make_response
+from flask import Flask, request, render_template, redirect, url_for, session, make_response, jsonify
 
 import pdfkit
+
+import jwt
+
+from functools import wraps
 
 # Biblioteca utilizada na manipulação do banco de dados através do Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -9,29 +13,19 @@ from flask_sqlalchemy import SQLAlchemy
 # Biblioteca utilizada para receber a data direto do sistema
 from datetime import datetime
 
-# Funções importadas da biblioteca Flask-Login
-from flask_login import LoginManager, UserMixin, login_required, login_user
-#from markupsafe import escape
-
-#from form import LoginForm
-
 app = Flask("__name__")
 
-# Banco de Dados com os usuários aprovados pelo administrador
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usuarios.db'
+# Banco de dados
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sistemaDocumentos.db'
 
-# Banco de Dados com os usuários aprovados pelo administrador
-# OBS: A configuração é diferente pois são utilizados dois ou mais BDs
-app.config['SQLALCHEMY_BINDS'] = {'comInterna' : 'sqlite:///comInternas.db',
-                                  'oficio' : 'sqlite:///oficios.db',
-                                  'usuarioNovo' : 'sqlite:///usuariosNovos.db'}
+# Chave secreta para a criação do token
+app.config['SECRET_KEY'] = 'chave_ultra_hiper_mega_secreta'
 
 # Variável que gerencia o Banco de Dados
 db = SQLAlchemy(app)
 
 # Usuários aprovados pelo administrador
 class usuario(db.Model):
-    # Atributos que recebem as informações do usuário
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(30))
     senha = db.Column(db.String(50))
@@ -48,9 +42,6 @@ class usuario(db.Model):
 
 # Usuários novos sem aprovação do administrador
 class usuarioNovo(db.Model):
-    __bind_key__ = 'usuarioNovo'
-
-    # Atributos que recebem as informações do usuário
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(30))
     senha = db.Column(db.String(50))
@@ -67,9 +58,6 @@ class usuarioNovo(db.Model):
 
 # Ofício
 class oficio(db.Model):
-    __bind_key__ = 'oficio'
-
-    # Atributos que recebem as informações do ofício
     id = db.Column(db.Integer, primary_key=True)
     emissor = db.Column(db.String(100))
     cargo = db.Column(db.String(50))
@@ -85,9 +73,6 @@ class oficio(db.Model):
 
 # Comunicação Interna
 class comInterna(db.Model):
-    __bind_key__ = 'comInterna'
-
-    # Atributos que recebem as informações da comunicação interna
     id = db.Column(db.Integer, primary_key=True)
     emissor = db.Column(db.String(100))
     cargo = db.Column(db.String(50))
@@ -101,59 +86,47 @@ class comInterna(db.Model):
     def __repr__(self):
         return '<comunicacaoInterna %r>' % self
 
-#login_manager = LoginManager()
-#login_manager.init_app(app)
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-acess-token' in request.headers:
+            token = request.headers['x-acess-token']
+        if not token:
+            return 'Sem token de acesso'
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+            current_user = usuario.query.get_or_404(idUsuario)
+        except:
+            return 'Token inválido'
+        return f(current_user, *args, **kwargs)
+    return decorated
 
-#@property
-#def is_authenticated(self):
-#    return True
-
-#@property
-#def is_active(self):
-#    return True
-
-#@property
-#def is_anonymous(self):
-#    return False
-
-#def get_id(self):
-#    return str(self.id)
-
-#@login_manager.user_loader
-#def load_user(user_id):
-#    return User.get(user_id)
-
-# Definindo a chave secreta para usar na sessão
-app.secret_key = 'chave_privada'
-
-# Página Inicial. Login ainda indisponível
+# Página inicial
 @app.route("/")
 def incio():
     return render_template('inicio.html')
 
-# Login
+@app.route('/tokenteste')
+@token_required
+def tokenTeste(current_user):
+        return render_template('token.html', usuario = current_user)
+
+# Página de Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
-#    if request.method == 'POST':
-#        form = LoginForm()
-#        if form.validate_on_submit():
-#            email = request.form['email']
-#            user = usuario.query.get_or_404(email)
-#            if user and user.senha == form.data.senha:
-#                #login_user(user)
-#                return 'Login realizado com sucesso'
-#            else:
-#                return 'Ocorreu um erro.'
-#    else:
-#        return render_template('login.html', form=form)
-
-# Logout
-#@app.route("/logout")
-#@login_required
-#def logout():
-#    logout_user()
-#    return redirect('/login')
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+        todosUsuarios = usuario.query.order_by(usuario.id).all()
+        # Realiza o login
+        for usuarioLogin in todosUsuarios: # Corrigir essa gambiarra futuramente
+            if email == usuarioLogin.email and senha == usuarioLogin.senha:
+                token = jwt.encode({'user' : email, 'idUsuario' : usuarioLogin.id}, app.config['SECRET_KEY'])
+                return redirect(url_for('tokenTeste', token = token))
+        return 'Dados incorretos'
+    else:
+        return render_template('login.html')
 
 # Página na qual o usuário irá informar os dados do documento a ser gerado
 @app.route("/criardocumento", methods=['POST', 'GET'])
@@ -222,7 +195,7 @@ def listaComInternas():
     comInternas = comInterna.query.order_by(comInterna.id.desc()).all()
     return render_template('listaDocumentos.html', documentos = comInternas, tipo = "comInterna")
 
-# Página para alterações em um documento
+# Página para a alteração dos dados de um ofício existentente
 @app.route('/editaroficio/<int:id>', methods=['GET', 'POST'])
 def editarOficio(id):
     doc = oficio.query.get_or_404(id)
@@ -243,6 +216,7 @@ def editarOficio(id):
     else:
         return render_template('editarDocumento.html', documento = doc)
 
+# Página para a alteração dos dados de uma comunicação interna existente
 @app.route('/editarcomunicacaointerna/<int:id>', methods=['GET', 'POST'])
 def editarComInterna(id):
     doc = comInterna.query.get_or_404(id)
@@ -262,7 +236,7 @@ def editarComInterna(id):
     else:
         return render_template('editarDocumento.html', documento = doc)
 
-# Baixar um ofício
+# Págna para baixar um ofício existente
 @app.route('/baixaroficio/<int:id>')
 def baixarOficio(id):
     doc = oficio.query.get_or_404(id)
@@ -276,7 +250,7 @@ def baixarOficio(id):
     response.headers['Content-Disposition'] = 'inline;filename = output.pdf'
     return response
 
-# Baixar uma comunicação interna
+# Página para baixar uma comunicação interna existente
 @app.route('/baixarcomunicacaointerna/<int:id>')
 def baixarComInterna(id):
     doc = comInterna.query.get_or_404(id)
@@ -290,29 +264,21 @@ def baixarComInterna(id):
     response.headers['Content-Disposition'] = 'inline;filename = output.pdf'
     return response
 
+# Página para a criação de um usuário novo
 @app.route('/criarusuario', methods=['GET', 'POST'])
 def criarUsuario():
      # Quando um novo usuário é gerado
     if request.method == 'POST':
 
         # Recebe as informações passadas pelo usuário no formulário
-        usuario_email = request.form['email']
-        usuario_senha = request.form['senha']
-        usuario_nome = request.form['nome']
-        usuario_nivelCargo = request.form['nivelCargo']
-        usuario_cargo = request.form['cargo']
-        usuario_area = request.form['area']
-        usuario_divisao = request.form['divisao']
-
-        # Variável que armazena as informações do usuário gerado
         usuarioCadastrado = usuarioNovo(
-            email = usuario_email,
-            senha = usuario_senha,
-            nome = usuario_nome,
-            nivelCargo = usuario_nivelCargo,
-            cargo = usuario_cargo,
-            area = usuario_area,
-            divisao = usuario_divisao
+            email = request.form['email'],
+            senha = request.form['senha'],
+            nome = request.form['nome'],
+            nivelCargo = request.form['nivelCargo'],
+            cargo = request.form['cargo'],
+            area = request.form['area'],
+            divisao = request.form['divisao']
         )
 
         # Salva as informações do novo documento no 
@@ -320,9 +286,9 @@ def criarUsuario():
         try:
             db.session.add(usuarioCadastrado)
             db.session.commit()
-            return redirect('/listausuarios')
+            return redirect('/listausuariosnovos')
 
-        # Caso ocorra um erro com o BD
+            # Caso ocorra um erro com o BD
         except:
             return 'Occorreu um erro ao salvar o documento'
 
@@ -330,11 +296,13 @@ def criarUsuario():
     else:
         return render_template('criarUsuario.html')
 
+# Página com a lista de usuários aprovados pelo administrador
 @app.route('/listausuarios', methods=['POST', 'GET'])
 def listausuarios():
     usuarios = usuario.query.order_by(usuario.id).all()
     return render_template('listaUsuarios.html', usuarios = usuarios, novo=False)
 
+# Página para a alteração dos dados de um usuário aprovado pelo administrador
 @app.route('/editarusuario/<int:id>', methods=['POST', 'GET'])
 def editarUsuario(id):
     usuarioEditado = usuario.query.get_or_404(id)
@@ -352,6 +320,7 @@ def editarUsuario(id):
     else:
         return render_template('editarUsuario.html', user = usuarioEditado)
 
+# Inativa um usuário aprovado pelo administrador
 @app.route('/inativarusuario/<int:id>')
 def inativarUsuario(id):
     usuarioAtivo = usuario.query.get_or_404(id)
@@ -364,6 +333,7 @@ def inativarUsuario(id):
     except:
         return "Ocorreu um erro ao inativar o usuário"
 
+# Reativa um usuário aprovado pelo administrador
 @app.route('/ativarusuario/<int:id>')
 def ativarUsuario(id):
     usuarioInativo = usuario.query.get_or_404(id)
@@ -376,18 +346,21 @@ def ativarUsuario(id):
     except:
         return "Ocorreu um erro ao ativar o usuario"
 
+# Página com a lista de usuários ainda não aprovados pelo administrador
 @app.route('/listausuariosnovos', methods=['GET', 'POST'])
 def listaUsuariosNovos():
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
     return render_template('listaUsuarios.html', usuarios = usuarios, novo=True)
 
+# Aprova um usuário novo, excluíndo-o da lista de usuários não aprovados e adicionando-o
+# à lista de usuários aprovados pelo administrador
 @app.route('/aprovarusuario/<int:id>')
 def aprovarUsuario(id):
     usuarioAprovado = usuarioNovo.query.get_or_404(id)
     usuarioAprovadoNovo = usuario(
         email = usuarioAprovado.email,
         senha = usuarioAprovado.senha,
-        nome = usuarioAprovado.senha,
+        nome = usuarioAprovado.nome,
         nivelCargo = usuarioAprovado.nivelCargo,
         area = usuarioAprovado.area,
         divisao = usuarioAprovado.divisao
@@ -402,13 +375,16 @@ def aprovarUsuario(id):
     except:
         return "Ocorreu um erro ao aprovar o usuário."
 
+# Reprova o cadastro de um usuário novo, excluíndo-o da lista de usuários não aprovados
 @app.route('/reprovarusuario/<int:id>')
 def reprovarUsuario(id):
     usuarioReprovado = usuarioNovo.query.get_or_404(id)
     try:
         db.session.delete(usuarioReprovado)
         db.session.commit()
+
         # Adicionar página pra selecionar os campos preenchidos incorretamente
+
         # Envia um e-mail pro usuário informando que ele foi reprovado
         # e os campos que estão errados.
         return redirect('/listausuariosnovos')
@@ -418,6 +394,6 @@ def reprovarUsuario(id):
 # Função que inicia a aplicação
 if __name__ == "__main__":
 
-    # Com essas configurações o endereço para utilizar a aplicação
-    # no navegador sempre será "localhost:5000" 
+    # Com essas configurações o endereço para utilizar a aplicação no navegador
+    # sempre será "localhost:5000" e o debug sempre estará ativado
     app.run(host="localhost", port=5000, debug=True)
