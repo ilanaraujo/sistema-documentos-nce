@@ -1,5 +1,5 @@
 #Funções importadas da biblioteca Flask-Mail
-from fask_mail import Mail, Message
+from flask_mail import Mail, Message
 #Variável que gerencia a biblioteca Flask-Mail
 mail = mail(app)
 #Configuração do Flask-Mail
@@ -32,5 +32,5 @@ def mail_aprovado(id):
 #função de envio de email para usuário reprovado
 def mail_reprovado(id):
         msg = mail('Cadastro reprovado.', recipients=[usuarioNovo.email])
-        msg.body = ('Seu cadastro foi reprovado pelos seguintes erros:\n {}'.format({{form.cadastroReprovado}})
+        msg.body = ('Seu cadastro foi reprovado pelos seguintes erros:\n {}'.format({{form.cadastroReprovado}}))
         mail.send(msg)
