@@ -103,7 +103,7 @@ def token_required(f):
     return decorated
 
 # Página inicial
-@app.route("/")
+@app.route("/aaa")
 def incio():
     return render_template('inicio.html')
 
