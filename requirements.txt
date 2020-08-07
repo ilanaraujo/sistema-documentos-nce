@@ -9,3 +9,4 @@ wkhtmltopdf
 Flask-WTF
 flask_wtf
 pyjwt
+flask_mail
