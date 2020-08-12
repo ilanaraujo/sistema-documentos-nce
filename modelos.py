@@ -1,5 +1,7 @@
 from sisdoc import db
 
+from datetime import datetime
+
 # Usuários aprovados pelo administrador
 class usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)

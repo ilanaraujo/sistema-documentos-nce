@@ -1,10 +1,11 @@
 # Funções importadas da biblioteca padrão do Flask
 from flask import Flask, request, render_template, redirect, url_for, session, make_response, jsonify
 
+# Utilizada para gerar o PDF
 import pdfkit
 
+#Utilizadas na criação do Token
 import jwt
-
 from functools import wraps
 
 # Biblioteca utilizada na manipulação do banco de dados através do Flask
@@ -13,44 +14,44 @@ from flask_sqlalchemy import SQLAlchemy
 # Biblioteca utilizada para receber a data direto do sistema
 from datetime import datetime
 
+#Arquivo com as classes de usuários e documentos
 import modelos
 
+# Variável que representa a aplicação
 app = Flask("__name__")
 
-# Banco de dados
+# Configuração do Banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sistemaDocumentos.db'
+db = SQLAlchemy(app)
 
 # Chave secreta para a criação do token
 app.config['SECRET_KEY'] = 'chave_ultra_hiper_mega_secreta'
 
-# Variável que gerencia o Banco de Dados
-db = SQLAlchemy(app)
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if 'x-acess-token' in request.headers:
-            token = request.headers['x-acess-token']
-        if not token:
-            return 'Sem token de acesso'
-        try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = usuario.query.get_or_404(idUsuario)
-        except:
-            return 'Token inválido'
-        return f(current_user, *args, **kwargs)
-    return decorated
+#def token_required(f):
+#    @wraps(f)
+#    def decorated(*args, **kwargs):
+#        token = None
+#        if 'x-acess-token' in request.headers:
+#            token = request.headers['x-acess-token']
+#        if not token:
+#            return 'Sem token de acesso'
+#        try:
+#            data = jwt.decode(token, app.config['SECRET_KEY'])
+#            current_user = usuario.query.get_or_404(idUsuario)
+#        except:
+#            return 'Token inválido'
+#        return f(current_user, *args, **kwargs)
+#    return decorated
 
 # Página inicial
-@app.route("/aaa")
+@app.route("/")
 def incio():
     return render_template('inicio.html')
 
-@app.route('/tokenteste')
-@token_required
-def tokenTeste(current_user):
-        return render_template('token.html', usuario = current_user)
+#@app.route('/tokenteste')
+#@token_required
+#def tokenTeste(current_user):
+#        return render_template('token.html', usuario = current_user)
 
 # Página de Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -62,13 +63,14 @@ def login():
         # Realiza o login
         for usuarioLogin in todosUsuarios: # Corrigir essa gambiarra futuramente
             if email == usuarioLogin.email and senha == usuarioLogin.senha:
-                token = jwt.encode({'user' : email, 'idUsuario' : usuarioLogin.id}, app.config['SECRET_KEY'])
-                return redirect(url_for('tokenTeste', token = token))
+                #token = jwt.encode({'user' : email, 'idUsuario' : usuarioLogin.id}, app.config['SECRET_KEY'])
+                #return redirect(url_for('tokenTeste', token = token))
+                return 'Login realizado com sucesso'
         return 'Dados incorretos'
     else:
         return render_template('login.html')
 
-# Página na qual o usuário irá informar os dados do documento a ser gerado
+# Página de criação de um novo documento
 @app.route("/criardocumento", methods=['POST', 'GET'])
 def criarDocumento():
     # Quando um novo documento é gerado
@@ -330,6 +332,8 @@ def reprovarUsuario(id):
         return redirect('/listausuariosnovos')
     except:
         return "Ocorreu um erro ao reprovar o usuário"
+
+
 
 # Função que inicia a aplicação
 if __name__ == "__main__":
