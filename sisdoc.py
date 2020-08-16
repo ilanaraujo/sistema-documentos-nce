@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 #Arquivo com as classes de usuários e documentos
-import modelos
+from modelos import *
 
 # Variável que representa a aplicação
 app = Flask("__name__")
@@ -27,21 +27,21 @@ db = SQLAlchemy(app)
 # Chave secreta para a criação do token
 app.config['SECRET_KEY'] = 'chave_ultra_hiper_mega_secreta'
 
-#def token_required(f):
-#    @wraps(f)
-#    def decorated(*args, **kwargs):
-#        token = None
-#        if 'x-acess-token' in request.headers:
-#            token = request.headers['x-acess-token']
-#        if not token:
-#            return 'Sem token de acesso'
-#        try:
-#            data = jwt.decode(token, app.config['SECRET_KEY'])
-#            current_user = usuario.query.get_or_404(idUsuario)
-#        except:
-#            return 'Token inválido'
-#        return f(current_user, *args, **kwargs)
-#    return decorated
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-acess-token' in request.headers:
+            token = request.headers['x-acess-token']
+        if not token:
+            return 'Sem token de acesso'
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+            current_user = usuario.query.get_or_404(idUsuario)
+        except:
+            return 'Token inválido'
+        return f(current_user, *args, **kwargs)
+    return decorated
 
 # Página inicial
 @app.route("/")
@@ -59,14 +59,14 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         senha = request.form['senha']
-        todosUsuarios = usuario.query.order_by(usuario.id).all()
+        usuarioLogin = usuario.query.filter_by(email=email).first()
         # Realiza o login
-        for usuarioLogin in todosUsuarios: # Corrigir essa gambiarra futuramente
-            if email == usuarioLogin.email and senha == usuarioLogin.senha:
-                #token = jwt.encode({'user' : email, 'idUsuario' : usuarioLogin.id}, app.config['SECRET_KEY'])
-                #return redirect(url_for('tokenTeste', token = token))
-                return 'Login realizado com sucesso'
-        return 'Dados incorretos'
+        if email == usuarioLogin.email and senha == usuarioLogin.senha:
+            #token = jwt.encode({'user' : email, 'idUsuario' : usuarioLogin.id}, app.config['SECRET_KEY'])
+            #return redirect(url_for('tokenTeste', token = token))
+            return 'Login realizado com sucesso'
+        else:
+            return 'Dados incorretos'
     else:
         return render_template('login.html')
 
@@ -292,7 +292,7 @@ def ativarUsuario(id):
 @app.route('/listausuariosnovos', methods=['GET', 'POST'])
 def listaUsuariosNovos():
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
-    return render_template('listaUsuarios.html', usuarios = usuarios, novo=True)
+    return render_template('listaUsuarios.html', novo=True)
 
 # Aprova um usuário novo, excluíndo-o da lista de usuários não aprovados e adicionando-o
 # à lista de usuários aprovados pelo administrador
