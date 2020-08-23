@@ -88,8 +88,6 @@ class comInterna(db.Model):
     def __repr__(self):
         return '<comunicacaoInterna %r>' % self
 
-
-
 # Decorador para páginas que exigem um Token
 def token_required(f):
     @wraps(f)
