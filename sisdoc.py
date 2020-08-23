@@ -12,7 +12,7 @@ from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 
 # Biblioteca utilizada para receber a data direto do sistema
-from datetime import datetime
+from datetime import datetime, timedelta
 
 #Arquivo com as classes de usuários e documentos
 from modelos import *
@@ -27,20 +27,20 @@ db = SQLAlchemy(app)
 # Chave secreta para a criação do token
 app.config['SECRET_KEY'] = 'chave_ultra_hiper_mega_secreta'
 
+# Decorador para páginas que exigem um Token
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = None
-        if 'x-acess-token' in request.headers:
-            token = request.headers['x-acess-token']
+        token = request.args.get('token')
+
         if not token:
             return 'Sem token de acesso'
+
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = usuario.query.get_or_404(idUsuario)
         except:
             return 'Token inválido'
-        return f(current_user, *args, **kwargs)
+        return f(*args, **kwargs)
     return decorated
 
 # Página inicial
@@ -48,10 +48,11 @@ def token_required(f):
 def incio():
     return render_template('inicio.html')
 
-#@app.route('/tokenteste')
-#@token_required
-#def tokenTeste(current_user):
-#        return render_template('token.html', usuario = current_user)
+# Teste de token
+@app.route('/tokenteste')
+@token_required
+def tokenTeste():
+    return 'Token válido'
 
 # Página de Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -60,11 +61,18 @@ def login():
         email = request.form['email']
         senha = request.form['senha']
         usuarioLogin = usuario.query.filter_by(email=email).first()
-        # Realiza o login
+
+        # E-mail e senha corretos
         if email == usuarioLogin.email and senha == usuarioLogin.senha:
-            #token = jwt.encode({'user' : email, 'idUsuario' : usuarioLogin.id}, app.config['SECRET_KEY'])
-            #return redirect(url_for('tokenTeste', token = token))
-            return 'Login realizado com sucesso'
+            # Gera um token que expira após 45 segundos
+            token = jwt.encode({'user' : email,
+                                'exp' : datetime.utcnow() + timedelta(seconds = 45)
+                               },
+                               app.config['SECRET_KEY']
+                              )
+            return redirect(url_for('tokenTeste', token = token))
+
+        # E-mail ou senha incorretos
         else:
             return 'Dados incorretos'
     else:
