@@ -1,5 +1,5 @@
 # Funções importadas da biblioteca padrão do Flask
-from flask import Flask, request, render_template, redirect, url_for, session, make_response, jsonify
+from flask import Flask, request, render_template, redirect, url_for, session, make_response
 
 # Utilizada para gerar o PDF
 import pdfkit
@@ -14,8 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 # Biblioteca utilizada para receber a data direto do sistema
 from datetime import datetime, timedelta
 
-#Arquivo com as classes de usuários e documentos
-from modelos import *
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Variável que representa a aplicação
 app = Flask("__name__")
@@ -24,8 +23,72 @@ app = Flask("__name__")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sistemaDocumentos.db'
 db = SQLAlchemy(app)
 
-# Chave secreta para a criação do token
+# Chave secreta
 app.config['SECRET_KEY'] = 'chave_ultra_hiper_mega_secreta'
+
+# Usuários aprovados pelo administrador
+class usuario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(30))
+    senha = db.Column(db.String())
+    nome = db.Column(db.String(50))
+    cargo = db.Column(db.String(30))
+    nivelCargo = db.Column(db.Integer)
+    area = db.Column(db.String(30))
+    divisao = db.Column(db.String(30))
+    status = db.Column(db.Boolean, default=True)
+
+    # Retorna a id do usuário criado
+    def __repr__(self):
+        return '<usuario %r>' % self.id
+
+# Usuários novos sem aprovação do administrador
+class usuarioNovo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(30))
+    senha = db.Column(db.String())
+    nome = db.Column(db.String(50))
+    cargo = db.Column(db.String(30))
+    nivelCargo = db.Column(db.Integer)
+    area = db.Column(db.String(30))
+    divisao = db.Column(db.String(30))
+    aprovacao = db.Column(db.Boolean, default=False)
+
+    # Retorna a id do usuário criado
+    def __repr__(self):
+        return '<usuarioNovo %r>' % self.id
+
+# Ofício
+class oficio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    emissor = db.Column(db.String(100))
+    cargo = db.Column(db.String(50))
+    area = db.Column(db.String(50))
+    assunto = db.Column(db.String(100))
+    destinatario = db.Column(db.String(100))
+    data = db.Column(db.DateTime, default=datetime.utcnow)
+    mensagem = db.Column(db.String(1000))
+
+    # Retorna a id do oficio que acaba de ser gerado
+    def __repr__(self):
+        return '<oficio %r>' % self
+
+# Comunicação Interna
+class comInterna(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    emissor = db.Column(db.String(100))
+    cargo = db.Column(db.String(50))
+    area = db.Column(db.String(50))
+    assunto = db.Column(db.String(100))
+    destinatario = db.Column(db.String(100))
+    data = db.Column(db.DateTime, default=datetime.utcnow)
+    mensagem = db.Column(db.String(1000))
+
+    # Retorna a id do oficio que acaba de ser gerado
+    def __repr__(self):
+        return '<comunicacaoInterna %r>' % self
+
+
 
 # Decorador para páginas que exigem um Token
 def token_required(f):
@@ -63,7 +126,7 @@ def login():
         usuarioLogin = usuario.query.filter_by(email=email).first()
 
         # E-mail e senha corretos
-        if email == usuarioLogin.email and senha == usuarioLogin.senha:
+        if email == usuarioLogin.email and check_password_hash(usuarioLogin.senha, senha):
             # Gera um token que expira após 45 segundos
             token = jwt.encode({'user' : email,
                                 'exp' : datetime.utcnow() + timedelta(seconds = 45)
@@ -223,7 +286,7 @@ def criarUsuario():
         # Recebe as informações passadas pelo usuário no formulário
         usuarioCadastrado = usuarioNovo(
             email = request.form['email'],
-            senha = request.form['senha'],
+            senha = generate_password_hash(request.form['senha']),
             nome = request.form['nome'],
             nivelCargo = request.form['nivelCargo'],
             cargo = request.form['cargo'],
@@ -237,11 +300,9 @@ def criarUsuario():
             db.session.add(usuarioCadastrado)
             db.session.commit()
             return redirect('/listausuariosnovos')
-
-            # Caso ocorra um erro com o BD
+        # Caso ocorra um erro com o BD
         except:
-            return 'Occorreu um erro ao salvar o documento'
-
+            return 'Occorreu um erro ao registrar o usuário'
     # Quando a página é acessada
     else:
         return render_template('criarUsuario.html')
@@ -300,7 +361,7 @@ def ativarUsuario(id):
 @app.route('/listausuariosnovos', methods=['GET', 'POST'])
 def listaUsuariosNovos():
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
-    return render_template('listaUsuarios.html', novo=True)
+    return render_template('listaUsuarios.html', usuarios = usuarios, novo=True)
 
 # Aprova um usuário novo, excluíndo-o da lista de usuários não aprovados e adicionando-o
 # à lista de usuários aprovados pelo administrador
@@ -311,6 +372,7 @@ def aprovarUsuario(id):
         email = usuarioAprovado.email,
         senha = usuarioAprovado.senha,
         nome = usuarioAprovado.nome,
+        cargo = usuarioAprovado.cargo,
         nivelCargo = usuarioAprovado.nivelCargo,
         area = usuarioAprovado.area,
         divisao = usuarioAprovado.divisao
@@ -321,9 +383,10 @@ def aprovarUsuario(id):
         db.session.commit()
         # Envia um e-mail pro usuário informando que ele foi aprovado
         # e que já pode usar o sistema de documentos.
-        return redirect('/listausuariosnovos')
     except:
         return "Ocorreu um erro ao aprovar o usuário."
+    return redirect('/listausuariosnovos')
+    
 
 # Reprova o cadastro de um usuário novo, excluíndo-o da lista de usuários não aprovados
 @app.route('/reprovarusuario/<int:id>')
