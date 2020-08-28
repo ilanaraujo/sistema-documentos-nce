@@ -16,9 +16,30 @@ from datetime import datetime, timedelta
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# Biblioteca utulizada para envio de emails
+from flask_mail import Mail, Message
+
+
 # Variável que representa a aplicação
 app = Flask("__name__")
 
+# Configuração do Flask-Mail
+app.config['DEBUG'] = True
+app.config['TESTING'] = False
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'lucasjara1997@gmail.com'
+app.config['MAIL_PASSWORD'] = '20fqwzss20'
+app.config['MAIL_DEFAULT_SENDER'] = 'lucasjara1997@gmail.com'
+app.config['MAIL_MAX_MAILS'] = None 
+app.config['MAIL_SUPRESS_SEND']  = False
+app.config['MAIL_ASCII_ATTACHEMENTS'] = False
+
+mail = Mail(app)
+
+ 
 # Configuração do Banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sistemaDocumentos.db'
 db = SQLAlchemy(app)
@@ -336,8 +357,10 @@ def inativarUsuario(id):
     usuarioAtivo.status = False
     try:
         db.session.commit()
-        # Envia um e-mail pro usuário informando
-        # que ele foi inativado
+        msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
+        mail.send(msg)
+        
         return redirect('/listausuarios')
     except:
         return "Ocorreu um erro ao inativar o usuário"
@@ -349,8 +372,10 @@ def ativarUsuario(id):
     usuarioInativo.status = True
     try:
         db.session.commit()
-        # Envia um email pro usuário informando
-        # que ele foi ativado
+        msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE' %(usuarioInativo.nome,usuarioInativo.email))
+        mail.send(msg)
+        
         return redirect('/listausuarios')
     except:
         return "Ocorreu um erro ao ativar o usuario"
@@ -377,6 +402,9 @@ def aprovarUsuario(id):
     )
     try:
         db.session.add(usuarioAprovadoNovo)
+        msg = Message(subject='Ativação no sistema', recipients= [usuarioAprovadoNovo.email])
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi aprovado e ativo  pronto para uso no sistema!\nAtenciosamente, coordenação NCE' %(usuarioAprovadoNovo.nome, usuarioAprovadoNovo.email))
+        mail.send(msg)
         db.session.delete(usuarioAprovado)
         db.session.commit()
         # Envia um e-mail pro usuário informando que ele foi aprovado
@@ -392,6 +420,9 @@ def reprovarUsuario(id):
     usuarioReprovado = usuarioNovo.query.get_or_404(id)
     try:
         db.session.delete(usuarioReprovado)
+        msg = Message(subject='Ativação no sistema', recipients= [usuarioReprovado.email])
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi reprovado no sistema!\nAtenciosamente, coordenação NCE' %(usuarioReprovado.nome, usuarioReprovado.email))
+        mail.send(msg)
         db.session.commit()
 
         # Adicionar página pra selecionar os campos preenchidos incorretamente

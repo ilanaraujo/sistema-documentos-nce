@@ -17,12 +17,12 @@ app.config['MAIL_ASCII_ATTACHEMENTS'] = False
 #função de envio de email para usuário ativo
 def mail_ativo(id):
         msg = Message('Ativação no sistema', recipients= [usuarioInativo.email])
-        msg.body = ('Olá sr/sra. {}, seu cadastro com o email: {}  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE'.format(usuarioInativo.nome,usuarioInativo.email))
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE' %(usuarioInativo.nome,usuarioInativo.email))
         mail.send(msg)
 #função de envio de email para usuário inativo
 def mail_inativo(id):
         msg = Message('Desativação  no sistema', recipients= [usuarioAtivo.email])
-        msg.body = ('Olá sr/sra. {}, seu cadastro com o email: {}  foi desativado do sistema!\n Atenciosamente, coordenação NCE'.format(usuarioAtivo.nome,usuarioAtivo.email))
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %(usuarioAtivo.nome,usuarioAtivo.email))
         mail.send(msg)
 #função de envio de email para usuário aprovado
 def mail_aprovado(id):
