@@ -14,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 # Biblioteca utilizada para receber a data direto do sistema
 from datetime import datetime, timedelta
 
+# Utilizada para salvar a senha no BD com uma hash
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Biblioteca utulizada para envio de emails
@@ -33,13 +34,12 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'adm@gmail.com'
 app.config['MAIL_PASSWORD'] = 'senha'
 app.config['MAIL_DEFAULT_SENDER'] = 'adm@gmail.com'
-app.config['MAIL_MAX_MAILS'] = None 
+app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False
 app.config['MAIL_ASCII_ATTACHEMENTS'] = False
 
 mail = Mail(app)
 
- 
 # Configuração do Banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sistemaDocumentos.db'
 db = SQLAlchemy(app)
@@ -119,22 +119,25 @@ def token_required(f):
             return 'Sem token de acesso'
 
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
+            token_dec = jwt.decode(token, app.config['SECRET_KEY'])
+            usuario_atual = usuario.query.filter_by(email = token_dec['email']).first()
         except:
             return 'Token inválido'
-        return f(*args, **kwargs)
+        return f(token, usuario_atual, *args, **kwargs)
     return decorated
+
+# Nota: alterar os return 'algum erro' pra flash messages nas próprias páginas
 
 # Página inicial
 @app.route("/")
 def incio():
     return render_template('inicio.html')
 
-# Teste de token
+# Teste de token. Será removida futuramente
 @app.route('/tokenteste')
 @token_required
-def tokenTeste():
-    return 'Token válido'
+def tokenTeste(token, usuario_atual):
+    return 'Token válido\nToken = {token}\nUsuário:{a}'.format(a = user.email, token = token)
 
 # Página de Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -146,9 +149,9 @@ def login():
 
         # E-mail e senha corretos
         if email == usuarioLogin.email and check_password_hash(usuarioLogin.senha, senha):
-            # Gera um token que expira após 45 segundos
-            token = jwt.encode({'user' : email,
-                                'exp' : datetime.utcnow() + timedelta(seconds = 45)
+            # Gera um token que expira após 2 minutos
+            token = jwt.encode({'email' : email,
+                                'exp' : datetime.utcnow() + timedelta(minutes = 2)
                                },
                                app.config['SECRET_KEY']
                               )
@@ -156,7 +159,7 @@ def login():
 
         # E-mail ou senha incorretos
         else:
-            return 'Dados incorretos'
+            return 'Dados incorretos, volte para a página anterior.'
     else:
         return render_template('login.html')
 
@@ -208,7 +211,7 @@ def criarDocumento():
 
         # Caso ocorra um erro com o armazenamento do
         except:
-            return 'Occorreu um erro ao salvar o documento'
+            return 'Occorreu um erro ao salvar o documento. Retorne para a página anterior'
 
     # Quando a página é acessada
     else:
@@ -244,7 +247,7 @@ def editarOficio(id):
 
         # Caso ocorra um erro com o BD
         except:
-            return 'Occorreu um erro ao editar o documento'
+            return 'Occorreu um erro ao editar o documento. Volte para a página anterior'
     else:
         return render_template('editarDocumento.html', documento = doc)
 
@@ -360,7 +363,7 @@ def inativarUsuario(id):
         msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
         msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
         mail.send(msg)
-        
+
         return redirect('/listausuarios')
     except:
         return "Ocorreu um erro ao inativar o usuário"
@@ -375,7 +378,7 @@ def ativarUsuario(id):
         msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
         msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE' %(usuarioInativo.nome,usuarioInativo.email))
         mail.send(msg)
-        
+
         return redirect('/listausuarios')
     except:
         return "Ocorreu um erro ao ativar o usuario"
@@ -412,7 +415,6 @@ def aprovarUsuario(id):
     except:
         return "Ocorreu um erro ao aprovar o usuário."
     return redirect('/listausuariosnovos')
-    
 
 # Reprova o cadastro de um usuário novo, excluíndo-o da lista de usuários não aprovados
 @app.route('/reprovarusuario/<int:id>')
@@ -433,11 +435,9 @@ def reprovarUsuario(id):
     except:
         return "Ocorreu um erro ao reprovar o usuário"
 
-
-
 # Função que inicia a aplicação
 if __name__ == "__main__":
 
     # Com essas configurações o endereço para utilizar a aplicação no navegador
-    # sempre será "localhost:5000" e o debug sempre estará ativado
+    # sempre será "localhost:5000" e o debug mode sempre estará ativado
     app.run(host="localhost", port=5000, debug=True)
