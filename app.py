@@ -20,7 +20,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Biblioteca utulizada para envio de emails
 from flask_mail import Mail, Message
 
-
 # Variável que representa a aplicação
 app = Flask("__name__")
 
@@ -83,6 +82,7 @@ class usuarioNovo(db.Model):
 class oficio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     emissor = db.Column(db.String(100))
+    autor = db.Column(db.String(100))
     cargo = db.Column(db.String(50))
     area = db.Column(db.String(50))
     assunto = db.Column(db.String(100))
@@ -98,6 +98,7 @@ class oficio(db.Model):
 class comInterna(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     emissor = db.Column(db.String(100))
+    autor = db.Column(db.String(100))
     cargo = db.Column(db.String(50))
     area = db.Column(db.String(50))
     assunto = db.Column(db.String(100))
@@ -110,7 +111,29 @@ class comInterna(db.Model):
         return '<comunicacaoInterna %r>' % self
 
 # Decorador para páginas que exigem um Token
-def token_required(f):
+def token_normal(f):
+    @wraps(f)
+    def decorador(*args, **kwargs):
+        token = request.args.get('token')
+        tipo = request.args.get('tipo')
+        id = request.args.get('id')
+        if not token:
+            return 'Sem token de acesso'
+
+        try:
+            token_dec = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return 'Token inválido'
+        usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
+        if not usuario_logado.cargo:
+            return 'Adm não permitido aqui'
+        if tipo and id:
+            return f(token, usuario_logado, tipo, id, *args, **kwargs)
+        return f(token, usuario_logado, *args, **kwargs)
+    return decorador
+
+# Decorador para páginas do adm
+def token_adm(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.args.get('token')
@@ -120,24 +143,23 @@ def token_required(f):
 
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
-            usuario_atual = usuario.query.filter_by(email = token_dec['email']).first()
+            usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         except:
             return 'Token inválido'
-        return f(token, usuario_atual, *args, **kwargs)
+
+        if usuario_atual.cargo:
+            return 'Acesso inválido'
+        else:
+            return f(token, usuario_atual, *args, **kwargs)
     return decorated
 
-# Nota: alterar os return 'algum erro' pra flash messages nas próprias páginas
+
+# Nota: alterar os [return 'algum erro'] pra flash messages nas próprias páginas
 
 # Página inicial
 @app.route("/")
 def incio():
     return render_template('inicio.html')
-
-# Teste de token. Será removida futuramente
-@app.route('/tokenteste')
-@token_required
-def tokenTeste(token, usuario_atual):
-    return 'Token válido\nToken = {token}\nUsuário:{a}'.format(a = user.email, token = token)
 
 # Página de Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -155,7 +177,7 @@ def login():
                                },
                                app.config['SECRET_KEY']
                               )
-            return redirect(url_for('tokenTeste', token = token))
+            return redirect(url_for('perfil', token = token))
 
         # E-mail ou senha incorretos
         else:
@@ -163,15 +185,41 @@ def login():
     else:
         return render_template('login.html')
 
+# Página com informações do usuário logado
+@app.route('/perfil')
+@token_normal
+def perfil(token, usuario_logado):
+    return render_template('perfil.html', usuario = usuario_logado)
+
+# Página para a alteração dos dados do usuário logado
+@app.route('/editarusuario', methods=['POST', 'GET'])
+@token_normal
+def editarUsuario(token, usuario_logado):
+    if request.method == 'POST':
+        usuario_logado.nome = request.form['nome']
+        usuario_logado.nivelCargo = request.form['nivelCargo']
+        usuario_logado.cargo = request.form['cargo']
+        usuario_logado.area = request.form['area']
+        usuario_logado.divisao = request.form['divisao']
+        try:
+            db.session.commit()
+            return redirect(url_for('listaUsuarios', token = token))
+        except:
+            return 'Ocorreu um erro ao editar o usuário.'
+    else:
+        return render_template('editarUsuario.html', user = usuario_editado)
+
 # Página de criação de um novo documento
 @app.route("/criardocumento", methods=['POST', 'GET'])
-def criarDocumento():
+@token_normal
+def criarDocumento(token, usuario_logado):
     # Quando um novo documento é gerado
     if request.method == 'POST':
         # Recebe as informações passadas pelo usuário no formulário
         tipo = request.form['tipo']
-        area = request.form['area']
+        area = usuario_logado.area
         emissor = request.form['emissor']
+        autor = usuario_logado.nome
         destinatario = request.form['destinatario']
         cargo = request.form['cargo']
         assunto = request.form['assunto']
@@ -189,7 +237,7 @@ def criarDocumento():
             )
 
         # Criando uma nova comunicação interna
-        else:
+        if(tipo == 'comInterna'):
             doc = comInterna(
                 area = area,
                 emissor = emissor,
@@ -205,35 +253,40 @@ def criarDocumento():
             db.session.add(doc)
             db.session.commit()
             if(tipo == "oficio"):
-                return redirect('/listaoficios')
-            else:
-                return redirect('/listacomunicacoesinternas')
-
-        # Caso ocorra um erro com o armazenamento do
+                return redirect(url_for('listaOficios', token = token))
+            if(tipo == 'comInterna'):
+                return redirect(url_for('listaComInternas', token = token))
         except:
             return 'Occorreu um erro ao salvar o documento. Retorne para a página anterior'
 
     # Quando a página é acessada
     else:
-        return render_template('criarDocumento.html')
+        return render_template('criarDocumento.html', token = token)
 
 # Página com o histórico de documentos gerados
 @app.route("/listaoficios", methods=['POST', 'GET'])
-def listaOficios():
+@token_normal
+def listaOficios(token, usuario_logado):
     # Ofícios ordenados do mais novo para o mais antigo
     oficios = oficio.query.order_by(oficio.id.desc()).all()
-    return render_template('listaDocumentos.html', documentos = oficios, tipo = "oficio")
+    exp = jwt.decode(token, app.config['SECRET_KEY'])['exp']
+    return render_template('listaDocumentos.html', token = token, documentos = oficios, tipo = "oficio")
 
 @app.route("/listacomunicacoesinternas", methods=['POST', 'GET'])
-def listaComInternas():
+@token_normal
+def listaComInternas(token, usuario_logado):
     # Comunicações internas ordenadas da mais nova para a mais antiga 
     comInternas = comInterna.query.order_by(comInterna.id.desc()).all()
     return render_template('listaDocumentos.html', documentos = comInternas, tipo = "comInterna")
 
 # Página para a alteração dos dados de um ofício existentente
-@app.route('/editaroficio/<int:id>', methods=['GET', 'POST'])
-def editarOficio(id):
-    doc = oficio.query.get_or_404(id)
+@app.route('/editardocumento', methods=['GET', 'POST'])
+@token_normal
+def editarDocumento(token, usuario_logado, tipo, id):
+    if(tipo == 'oficio'):
+        doc = oficio.query.get_or_404(id)
+    else:
+        doc = comInterna.query.get_or_404(id)
     if request.method == 'POST':
         doc.area = request.form['area']
         doc.emissor = request.form['emissor']
@@ -243,56 +296,27 @@ def editarOficio(id):
         doc.mensagem = request.form['mensagem']
         try:
             db.session.commit()
-            return redirect('/listaoficios')
-
+            if tipo == 'oficio':
+                return redirect(url_for('listaOficios', token = token))
+            else:
+                return redirect(url_for('listaComInternas', token = token))
         # Caso ocorra um erro com o BD
         except:
             return 'Occorreu um erro ao editar o documento. Volte para a página anterior'
     else:
         return render_template('editarDocumento.html', documento = doc)
 
-# Página para a alteração dos dados de uma comunicação interna existente
-@app.route('/editarcomunicacaointerna/<int:id>', methods=['GET', 'POST'])
-def editarComInterna(id):
-    doc = comInterna.query.get_or_404(id)
-    if request.method == 'POST':
-        doc.area = request.form['area']
-        doc.emissor = request.form['emissor']
-        doc.destinatario = request.form['destinatario']
-        doc.cargo = request.form['cargo']
-        doc.assunto = request.form['assunto']
-        doc.mensagem = request.form['mensagem']
-        try:
-            db.session.commit()
-            return redirect('/listacomunicacoesinternas')
-        # Caso ocorra um erro com o BD
-        except:
-            return 'Occorreu um erro ao editar o documento'
-    else:
-        return render_template('editarDocumento.html', documento = doc)
-
 # Págna para baixar um ofício existente
-@app.route('/baixaroficio/<int:id>')
-def baixarOficio(id):
-    doc = oficio.query.get_or_404(id)
-    tipo = "Oficio"
+@app.route('/baixardocumento')
+@token_normal
+def baixarDocumento(token, usuario_logado, tipo, id):
+    if tipo == "oficio":
+        doc = oficio.query.get_or_404(id)
+    if tipo == "comInterna":
+        doc = comInterna.query.get_or_404(id)
 
     # Arquivo html que será convertido para PDF
     res = render_template('modeloDocumento.html',tipo = tipo, documento = doc)
-    responsestring = pdfkit.from_string(res, False)
-    response = make_response(responsestring)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline;filename = output.pdf'
-    return response
-
-# Página para baixar uma comunicação interna existente
-@app.route('/baixarcomunicacaointerna/<int:id>')
-def baixarComInterna(id):
-    doc = comInterna.query.get_or_404(id)
-    tipo = "Comunicação interna"
-
-    # Arquivo html que será convertido para PDF
-    res = render_template('modeloDocumento.html', documento = doc)
     responsestring = pdfkit.from_string(res, False)
     response = make_response(responsestring)
     response.headers['Content-Type'] = 'application/pdf'
@@ -334,24 +358,6 @@ def criarUsuario():
 def listausuarios():
     usuarios = usuario.query.order_by(usuario.id).all()
     return render_template('listaUsuarios.html', usuarios = usuarios, novo=False)
-
-# Página para a alteração dos dados de um usuário aprovado pelo administrador
-@app.route('/editarusuario/<int:id>', methods=['POST', 'GET'])
-def editarUsuario(id):
-    usuarioEditado = usuario.query.get_or_404(id)
-    if request.method == 'POST':
-        usuarioEditado.nome = request.form['nome']
-        usuarioEditado.nivelCargo = request.form['nivelCargo']
-        usuarioEditado.cargo = request.form['cargo']
-        usuarioEditado.area = request.form['area']
-        usuarioEditado.divisao = request.form['divisao']
-        try:
-            db.session.commit()
-            return redirect('/listausuarios')
-        except:
-            return 'Ocorreu um erro ao editar o usuário.'
-    else:
-        return render_template('editarUsuario.html', user = usuarioEditado)
 
 # Inativa um usuário aprovado pelo administrador
 @app.route('/inativarusuario/<int:id>')
@@ -405,13 +411,11 @@ def aprovarUsuario(id):
     )
     try:
         db.session.add(usuarioAprovadoNovo)
-        msg = Message(subject='Ativação no sistema', recipients= [usuarioAprovadoNovo.email])
-        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi aprovado e ativo  pronto para uso no sistema!\nAtenciosamente, coordenação NCE' %(usuarioAprovadoNovo.nome, usuarioAprovadoNovo.email))
-        mail.send(msg)
+        #msg = Message(subject='Ativação no sistema', recipients= [usuarioAprovadoNovo.email])
+        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi aprovado e ativo  pronto para uso no sistema!\nAtenciosamente, coordenação NCE' %(usuarioAprovadoNovo.nome, usuarioAprovadoNovo.email))
+        #mail.send(msg)
         db.session.delete(usuarioAprovado)
         db.session.commit()
-        # Envia um e-mail pro usuário informando que ele foi aprovado
-        # e que já pode usar o sistema de documentos.
     except:
         return "Ocorreu um erro ao aprovar o usuário."
     return redirect('/listausuariosnovos')
@@ -435,7 +439,7 @@ def reprovarUsuario(id):
     except:
         return "Ocorreu um erro ao reprovar o usuário"
 
-# Função que inicia a aplicação
+# Inicia a aplicação
 if __name__ == "__main__":
 
     # Com essas configurações o endereço para utilizar a aplicação no navegador
