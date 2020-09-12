@@ -234,6 +234,9 @@ def login():
 
         # E-mail e senha corretos
         if usuarioLogin and check_password_hash(usuarioLogin.senha, senha):
+            if not usuario.status:
+                flash("Usuário inativo.")
+                return redirect('/login')
             # Gera um token que expira após 10 minutos
             token = jwt.encode({'email' : email,
                                 'exp' : datetime.utcnow() + timedelta(minutes = 10)
