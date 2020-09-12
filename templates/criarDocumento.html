@@ -5,14 +5,10 @@
 {% endblock %}
 
 {% block header %}
-<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
-<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
-<li class="sidenav__list-item"><a href="/criardocumento" class="bottom current">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
-<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
-<li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
-<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom current">Criar Documento</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
 {% endblock %}
 
 {% block body %}

@@ -22,7 +22,7 @@
         </div>
         <header>
             <h1 id="titulo" class="header__name"><a href="#home">Gerador de documentos</a></h1>
-            <a href="#" class="header__login" title="Login"><i class="feather-icon__login" data-feather="user"></i></a>
+            <a href="/login" class="header__login" title="Login"><i class="feather-icon__login" data-feather="user"></i></a>
         </header>
         <aside id="sidenav" class="sidenav">
             <div class="close-icon" closeNav>
@@ -32,7 +32,19 @@
                 {% block header %}{% endblock %} <!--Toggling active classes-->
             </ul>
         </aside>
+
         <main class="main">
+				{% with mensagens = get_flashed_messages() %}
+				  {% if mensagens %}
+					<div class="alert alert-warning">
+						<ul class=flashes>
+						{% for mensagem in mensagens %}
+						<li>{{mensagem}}</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
+				{% endwith %}
             {% block body %}{% endblock %}
         </main>
         <footer class="footer__copyright">&copy Gerador de documentos</footer>

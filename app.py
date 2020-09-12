@@ -1,5 +1,5 @@
 # Funções importadas da biblioteca padrão do Flask
-from flask import Flask, request, render_template, redirect, url_for, session, make_response
+from flask import Flask, request, render_template, redirect, url_for, session, make_response, flash
 
 # Utilizada para gerar o PDF
 import pdfkit
@@ -72,7 +72,6 @@ class usuarioNovo(db.Model):
     nivelCargo = db.Column(db.Integer)
     area = db.Column(db.String(30))
     divisao = db.Column(db.String(30))
-    aprovacao = db.Column(db.Boolean, default=False)
 
     # Retorna a id do usuário criado
     def __repr__(self):
@@ -118,48 +117,112 @@ def token_normal(f):
         tipo = request.args.get('tipo')
         id = request.args.get('id')
         if not token:
-            return 'Sem token de acesso'
+            flash("Sem token de acesso")
+            return redirect('/login')
 
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
         except:
-            return 'Token inválido'
+            flash("Token inválido")
+            return redirect('/login')
         usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
-        if not usuario_logado.cargo:
-            return 'Adm não permitido aqui'
-        if tipo and id:
+        if not usuario_logado.nivelCargo:
+            flash("Acesso não autorizado")
+            return redirect(url_for('perfil', token = token))
+        elif tipo and id:
             return f(token, usuario_logado, tipo, id, *args, **kwargs)
-        return f(token, usuario_logado, *args, **kwargs)
+        else:
+            return f(token, usuario_logado, *args, **kwargs)
     return decorador
 
 # Decorador para páginas do adm
 def token_adm(f):
     @wraps(f)
-    def decorated(*args, **kwargs):
+    def decorador(*args, **kwargs):
         token = request.args.get('token')
-
+        id = request.args.get('id')
         if not token:
-            return 'Sem token de acesso'
+            flash("Sem token de acesso")
+            return redirect('/login')
 
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
             usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         except:
-            return 'Token inválido'
+            flash("Token inválido")
+            return redirect('/login')
 
-        if usuario_atual.cargo:
+        if usuario_logado.nivelCargo:
             return 'Acesso inválido'
+        elif id:
+            return f(token, id, *args, **kwargs)
         else:
-            return f(token, usuario_atual, *args, **kwargs)
-    return decorated
+            return f(token, *args, **kwargs)
+    return decorador
 
+def token_todos(f):
+    @wraps(f)
+    def decorador(*args, **kwargs):
+        token = request.args.get('token')
+        if not token:
+            flash("Sem token de acesso")
+            return redirect('/login')
+
+        try:
+            token_dec = jwt.decode(token, app.config['SECRET_KEY'])
+            usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
+        except:
+            flash("Token inválido")
+            return redirect('/login')
+
+        return f(token, usuario_logado, *args, **kwargs)
+    return decorador
 
 # Nota: alterar os [return 'algum erro'] pra flash messages nas próprias páginas
 
 # Página inicial
 @app.route("/")
-def incio():
+def inicio():
     return render_template('inicio.html')
+
+@app.route("/teste")
+def teste():
+    return render_template('reprovarUsuario.html', user = False)
+
+# Página para a criação de um usuário novo
+@app.route('/cadastrarusuario', methods=['GET', 'POST'])
+def cadastrarUsuario():
+     # Quando um novo usuário é gerado
+    if request.method == 'POST':
+
+        # Recebe as informações passadas pelo usuário no formulário
+        usuarioCadastrado = usuarioNovo(
+            email = request.form['email'],
+            senha = generate_password_hash(request.form['senha']),
+            nome = request.form['nome'],
+            nivelCargo = request.form['nivelCargo'],
+            cargo = request.form['cargo'],
+            area = request.form['area'],
+            divisao = request.form['divisao']
+        )
+        # Impede o cadastro de emails que não sejam do NCE
+        if not usuarioCadastrado.email.endswith("@nce.ufrj.br"):
+            flash("Insira um email do NCE")
+            return redirect('/cadastrarusuario')
+
+        # Salva as informações do novo documento no 
+        # BD e redireciona para o histórico
+        try:
+            db.session.add(usuarioCadastrado)
+            db.session.commit()
+            return redirect('/')
+        # Caso ocorra um erro com o BD
+        except:
+            flash("Occorreu um erro ao registrar o usuário")
+            return redirect('/cadastrarusuario')
+    # Quando a página é acessada
+    else:
+        return render_template('criarUsuario.html')
 
 # Página de Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -170,10 +233,10 @@ def login():
         usuarioLogin = usuario.query.filter_by(email=email).first()
 
         # E-mail e senha corretos
-        if email == usuarioLogin.email and check_password_hash(usuarioLogin.senha, senha):
-            # Gera um token que expira após 2 minutos
+        if usuarioLogin and check_password_hash(usuarioLogin.senha, senha):
+            # Gera um token que expira após 10 minutos
             token = jwt.encode({'email' : email,
-                                'exp' : datetime.utcnow() + timedelta(minutes = 2)
+                                'exp' : datetime.utcnow() + timedelta(minutes = 10)
                                },
                                app.config['SECRET_KEY']
                               )
@@ -181,15 +244,18 @@ def login():
 
         # E-mail ou senha incorretos
         else:
-            return 'Dados incorretos, volte para a página anterior.'
+            flash("Dados incorretos.")
+            return redirect('/login')
     else:
         return render_template('login.html')
 
+# ----------------------- Login necessário -------------------- #
+
 # Página com informações do usuário logado
 @app.route('/perfil')
-@token_normal
+@token_todos
 def perfil(token, usuario_logado):
-    return render_template('perfil.html', usuario = usuario_logado)
+    return render_template('perfil.html', usuario = usuario_logado, token = token)
 
 # Página para a alteração dos dados do usuário logado
 @app.route('/editarusuario', methods=['POST', 'GET'])
@@ -203,11 +269,13 @@ def editarUsuario(token, usuario_logado):
         usuario_logado.divisao = request.form['divisao']
         try:
             db.session.commit()
-            return redirect(url_for('listaUsuarios', token = token))
+            flash("Atualização do cadastro realizada com sucesso.")
+            return redirect(url_for('perfil', token = token))
         except:
-            return 'Ocorreu um erro ao editar o usuário.'
+            flash("Ocorreu um erro ao atualizar o cadastro.")
+            return redirect(url_for('perfil', token = token))
     else:
-        return render_template('editarUsuario.html', user = usuario_editado)
+        return render_template('editarUsuario.html', user = usuario_editado, token = token)
 
 # Página de criação de um novo documento
 @app.route("/criardocumento", methods=['POST', 'GET'])
@@ -257,7 +325,8 @@ def criarDocumento(token, usuario_logado):
             if(tipo == 'comInterna'):
                 return redirect(url_for('listaComInternas', token = token))
         except:
-            return 'Occorreu um erro ao salvar o documento. Retorne para a página anterior'
+            flash("Ocorreu um erro ao salvar o documento.")
+            return redirect(url_for('criarDocumento', token = token))
 
     # Quando a página é acessada
     else:
@@ -269,15 +338,64 @@ def criarDocumento(token, usuario_logado):
 def listaOficios(token, usuario_logado):
     # Ofícios ordenados do mais novo para o mais antigo
     oficios = oficio.query.order_by(oficio.id.desc()).all()
-    exp = jwt.decode(token, app.config['SECRET_KEY'])['exp']
+    nome = usuario_logado.nome
+    area = usuario_logado.area
+    divisao = usuario_logado.divisao
+
+    # Direção Geral
+    if usuario_logado.nivelCargo == 1:
+        pass
+
+    # Chefia de área
+    elif usuario_logado.nivelCargo == 2:
+        for doc in oficios:
+            if not (doc.area == area or nome == (doc.autor or doc.emissor)):
+                oficios.remove(doc)
+
+    # Chefia de divisão
+    elif usuario_logado.nivelCargo == 3:
+        for doc in oficios:
+            if not ((doc.area == area and doc.divisao == divisao) or nome == (doc.emissor or doc.autor)):
+                oficios.remove(doc)
+
+    # Funcionário comum
+    else:
+        for doc in oficios:
+            if not nome == (doc.emissor or doc.autor):
+                oficios.remove(doc)
     return render_template('listaDocumentos.html', token = token, documentos = oficios, tipo = "oficio")
 
 @app.route("/listacomunicacoesinternas", methods=['POST', 'GET'])
 @token_normal
 def listaComInternas(token, usuario_logado):
-    # Comunicações internas ordenadas da mais nova para a mais antiga 
-    comInternas = comInterna.query.order_by(comInterna.id.desc()).all()
-    return render_template('listaDocumentos.html', documentos = comInternas, tipo = "comInterna")
+    # Comunicações internas ordenadas do mais novo para o mais antigo
+    comInternas = comInterna.query.order_by(oficio.id.desc()).all()
+    nome = usuario_logado.nome
+    area = usuario_logado.area
+    divisao = usuario_logado.divisao
+
+    # Direção Geral
+    if usuario_logado.nivelCargo == 1:
+        pass
+
+    # Chefia de área
+    elif usuario_logado.nivelCargo == 2:
+        for doc in comInternas:
+            if not (doc.area == area or nome == (doc.autor or doc.emissor)):
+                comInternas.remove(doc)
+
+    # Chefia de divisão
+    elif usuario_logado.nivelCargo == 3:
+        for doc in comInternas:
+            if not ((doc.area == area and doc.divisao == divisao) or nome == (doc.emissor or doc.autor)):
+                comInternas.remove(doc)
+
+    # Funcionário comum
+    else:
+        for doc in comInternas:
+            if not nome == (doc.emissor or doc.autor):
+                comInternass.remove(doc)
+    return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna")
 
 # Página para a alteração dos dados de um ofício existentente
 @app.route('/editardocumento', methods=['GET', 'POST'])
@@ -285,7 +403,7 @@ def listaComInternas(token, usuario_logado):
 def editarDocumento(token, usuario_logado, tipo, id):
     if(tipo == 'oficio'):
         doc = oficio.query.get_or_404(id)
-    else:
+    if(tipo == 'comInterna'):
         doc = comInterna.query.get_or_404(id)
     if request.method == 'POST':
         doc.area = request.form['area']
@@ -302,9 +420,10 @@ def editarDocumento(token, usuario_logado, tipo, id):
                 return redirect(url_for('listaComInternas', token = token))
         # Caso ocorra um erro com o BD
         except:
-            return 'Occorreu um erro ao editar o documento. Volte para a página anterior'
+            flash("Ocorreu um erro ao atualizar as informações do documento.")
+            return redirect(url_for('editarDocumento', token = token))
     else:
-        return render_template('editarDocumento.html', documento = doc)
+        return render_template('editarDocumento.html', token = token, documento = doc)
 
 # Págna para baixar um ofício existente
 @app.route('/baixardocumento')
@@ -323,82 +442,62 @@ def baixarDocumento(token, usuario_logado, tipo, id):
     response.headers['Content-Disposition'] = 'inline;filename = output.pdf'
     return response
 
-# Página para a criação de um usuário novo
-@app.route('/criarusuario', methods=['GET', 'POST'])
-def criarUsuario():
-     # Quando um novo usuário é gerado
-    if request.method == 'POST':
-
-        # Recebe as informações passadas pelo usuário no formulário
-        usuarioCadastrado = usuarioNovo(
-            email = request.form['email'],
-            senha = generate_password_hash(request.form['senha']),
-            nome = request.form['nome'],
-            nivelCargo = request.form['nivelCargo'],
-            cargo = request.form['cargo'],
-            area = request.form['area'],
-            divisao = request.form['divisao']
-        )
-
-        # Salva as informações do novo documento no 
-        # BD e redireciona para o histórico
-        try:
-            db.session.add(usuarioCadastrado)
-            db.session.commit()
-            return redirect('/listausuariosnovos')
-        # Caso ocorra um erro com o BD
-        except:
-            return 'Occorreu um erro ao registrar o usuário'
-    # Quando a página é acessada
-    else:
-        return render_template('criarUsuario.html')
+#--------------------------- Administrador necessário ---------------- #
 
 # Página com a lista de usuários aprovados pelo administrador
 @app.route('/listausuarios', methods=['POST', 'GET'])
-def listausuarios():
+@token_adm
+def listaUsuarios(token):
     usuarios = usuario.query.order_by(usuario.id).all()
-    return render_template('listaUsuarios.html', usuarios = usuarios, novo=False)
+    return render_template('listaUsuarios.html',token = token, usuarios = usuarios, novo=False)
 
 # Inativa um usuário aprovado pelo administrador
-@app.route('/inativarusuario/<int:id>')
-def inativarUsuario(id):
+@app.route('/inativarusuario')
+@token_adm
+def inativarUsuario(token, id):
     usuarioAtivo = usuario.query.get_or_404(id)
+    if not usuarioAtivo.nivelCargo:
+        return redirect(url_for('listaUsuarios', token = token))
     usuarioAtivo.status = False
     try:
         db.session.commit()
-        msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
-        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
-        mail.send(msg)
-
-        return redirect('/listausuarios')
+        flash("Usuário inativado.")
+        #msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
+        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
+        #mail.send(msg)
     except:
-        return "Ocorreu um erro ao inativar o usuário"
+        flash("Ocorreu um erro ao inativar o usuario.")
+    return redirect(url_for('listaUsuarios', token = token))
 
 # Reativa um usuário aprovado pelo administrador
 @app.route('/ativarusuario/<int:id>')
-def ativarUsuario(id):
+@token_adm
+def ativarUsuario(token, id):
     usuarioInativo = usuario.query.get_or_404(id)
     usuarioInativo.status = True
     try:
         db.session.commit()
-        msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
-        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE' %(usuarioInativo.nome,usuarioInativo.email))
-        mail.send(msg)
-
-        return redirect('/listausuarios')
+        flash("Usuário ativado.")
+        #msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
+        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE' %(usuarioInativo.nome,usuarioInativo.email))
+        #mail.send(msg)
     except:
-        return "Ocorreu um erro ao ativar o usuario"
+        flash("Ocorreu um erro ao ativar o usuario")
+    return redirect(url_for('listaUsuarios', token = token))
+
 
 # Página com a lista de usuários ainda não aprovados pelo administrador
 @app.route('/listausuariosnovos', methods=['GET', 'POST'])
-def listaUsuariosNovos():
+@token_adm
+def listaUsuariosNovos(token):
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
-    return render_template('listaUsuarios.html', usuarios = usuarios, novo=True)
+    return render_template('listaUsuarios.html', token = token, usuarios = usuarios, novo=True)
 
 # Aprova um usuário novo, excluíndo-o da lista de usuários não aprovados e adicionando-o
 # à lista de usuários aprovados pelo administrador
-@app.route('/aprovarusuario/<int:id>')
-def aprovarUsuario(id):
+@app.route('/aprovarcadastro')
+@token_adm
+def aprovarCadastro(token, id):
     usuarioAprovado = usuarioNovo.query.get_or_404(id)
     usuarioAprovadoNovo = usuario(
         email = usuarioAprovado.email,
@@ -411,33 +510,53 @@ def aprovarUsuario(id):
     )
     try:
         db.session.add(usuarioAprovadoNovo)
+        db.session.delete(usuarioAprovado)
+        db.session.commit()
+        flash("Cadastro aprovado.")
         #msg = Message(subject='Ativação no sistema', recipients= [usuarioAprovadoNovo.email])
         #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi aprovado e ativo  pronto para uso no sistema!\nAtenciosamente, coordenação NCE' %(usuarioAprovadoNovo.nome, usuarioAprovadoNovo.email))
         #mail.send(msg)
-        db.session.delete(usuarioAprovado)
-        db.session.commit()
     except:
-        return "Ocorreu um erro ao aprovar o usuário."
-    return redirect('/listausuariosnovos')
+        flash("Ocorreu um erro ao aprovar o cadastro.")
+    return redirect(url_for('listaUsuariosNovos', token = token))
 
 # Reprova o cadastro de um usuário novo, excluíndo-o da lista de usuários não aprovados
-@app.route('/reprovarusuario/<int:id>')
-def reprovarUsuario(id):
+@app.route('/reprovarcadastro')
+@token_adm
+def reprovarCadastro(token, id):
     usuarioReprovado = usuarioNovo.query.get_or_404(id)
     try:
         db.session.delete(usuarioReprovado)
-        msg = Message(subject='Ativação no sistema', recipients= [usuarioReprovado.email])
-        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi reprovado no sistema!\nAtenciosamente, coordenação NCE' %(usuarioReprovado.nome, usuarioReprovado.email))
-        mail.send(msg)
         db.session.commit()
-
+        flash("Cadastro reprovado")
+        #msg = Message(subject='Ativação no sistema', recipients= [usuarioReprovado.email])
+        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi reprovado no sistema!\nAtenciosamente, coordenação NCE' %(usuarioReprovado.nome, usuarioReprovado.email))
+        #mail.send(msg)
         # Adicionar página pra selecionar os campos preenchidos incorretamente
-
-        # Envia um e-mail pro usuário informando que ele foi reprovado
-        # e os campos que estão errados.
-        return redirect('/listausuariosnovos')
     except:
-        return "Ocorreu um erro ao reprovar o usuário"
+        flash("Ocorreu um erro ao reprovar o cadastro.")
+    return redirect(url_for('listaUsuariosNovos', token = token))
+
+# Função pra criar o Usuário Administrador
+def cria_adm():
+    adm = usuario(
+        email = 'adm@email.com',
+        senha = generate_password_hash('senhaadm'),
+        nome = 'Administrador',
+        nivelCargo = 0,
+        cargo = 'Administrador',
+        area = 'Administrador',
+        divisao = 'Administrador'
+    )
+    if not usuario.query.filter_by(email = adm.email).first():
+        try:
+            db.session.add(adm)
+            db.session.commit()
+            return 'Administrador criado com sucesso.'
+        except:
+            return 'Ocorreu um erro ao criar o Administrador.'
+    else:
+        return 'Administrador já existe no banco'
 
 # Inicia a aplicação
 if __name__ == "__main__":

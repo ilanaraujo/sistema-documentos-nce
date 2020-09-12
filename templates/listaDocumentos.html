@@ -5,23 +5,19 @@
 {% endblock %}
 
 {% block header %}
-<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
-<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
-<li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
 
 {% if tipo == "oficio" %}
-<li class="sidenav__list-item"><a href="/listaoficios" class="bottom current">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom current">Ofícios</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
 {% endif %}
 
 {% if tipo == "comInterna" %}
-<li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom current">Comunicações Internas</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom current">Comunicações Internas</a></li>
 {% endif %}
 
-<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
-<li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
-<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
 {% endblock %}
 
 
@@ -37,6 +33,7 @@
         <th>Emissor</th>
         <th>Cargo</th>
         <th>Área</th>
+				<th>Divisão</th>
         <th>Destinatário</th>
         <th>Assunto</th>
         <th>Data</th>
@@ -48,19 +45,14 @@
         <td>{{ doc.emissor }}</td>
         <td>{{ doc.cargo }}</td>
         <td>{{ doc.area }}</td>
+				<td>{{ doc.divisao }}</td>
         <td>{{ doc.destinatario }}</td>
         <td>{{ doc.assunto }}</td>
         <td>{{ doc.data.date() }}</td>
         <td>
-	{% if tipo == "oficio" %}
-        <a href="/editaroficio/{{doc.id}}">Editar</a>
- 	<br>
-        <a href="/baixaroficio/{{doc.id}}">Baixar</a>
-	{% else %}
-	<a href="/editarcomunicacaointerna/{{doc.id}}">Editar</a>
-		<br>
-		<a href="/baixarcomunicacaointerna/{{doc.id}}">Baixar</a>
-	{% endif %}
+          <a href="{{url_for('editarDocumento', token = token, tipo = tipo, id = doc.id)}}">Editar</a>
+ 	        <br>
+          <a href="{{url_for('baixarDocumento', token = token, tipo = tipo, id = doc.id)}}">Baixar</a>
         </td>
         </tr>
     {% endfor %}

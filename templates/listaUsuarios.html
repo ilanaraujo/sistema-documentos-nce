@@ -9,19 +9,16 @@
 {% endblock %}
 
 {% block header %}
-<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
-<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
-<li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
-<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
+
 {% if novo %}
-<li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
-<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom current">Lista de Usuários Novos</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaUsuarios', token = token)}}" class="bottom">Usuários</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom current">Usuários Novos</a></li>
 {% else %}
-<li class="sidenav__list-item"><a href="/listausuarios" class="bottom current">Lista de Usuários</a></li>
-<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaUsuarios', token = token)}}" class="bottom current">Usuários</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom">Usuários Novos</a></li>
 {% endif %}
+
 {% endblock %}
 
 
@@ -33,13 +30,13 @@
 {% endif %}
 <table border="2" align="center">
     <tr>
-        <th>e-mail</th>
-        <th>Nome</th>
-	<th>Nível do Cargo</th>
-        <th>Cargo</th>
-        <th>Área</th>
-        <th>Divisão</th>
-	<th>Opções</th>
+      <th>e-mail</th>
+      <th>Nome</th>
+			<th>Nível do Cargo</th>
+      <th>Cargo</th>
+      <th>Área</th>
+      <th>Divisão</th>
+			<th>Opções</th>
     </tr>
     {% for usuario in usuarios %}
         <tr>
@@ -50,22 +47,21 @@
             <td>{{ usuario.area }}</td>
             <td>{{ usuario.divisao }}</td>
             <td>
-                {% if novo %}
-		<a href="/aprovarusuario/{{usuario.id}}">Aprovar Cadastro</a>
-		<br>
-		<a href="/reprovarusuario/{{usuario.id}}">Reprovar Cadastro</a>
+    {% if novo %}
+			<a href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}">Aprovar Cadastro</a>
+			<br>
+			<a href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}">Reprovar Cadastro</a>
 		{% else %}
-		<a href="/editarusuario/{{usuario.id}}">Alterar Dados</a>
-		<br>
-		{% if usuario.status %}
-		<a href="/inativarusuario/{{usuario.id}}">Inativar</a>
-		{% else %}
-		<a href="/ativarusuario/{{usuario.id}}">Ativar</a>
-                {% endif %}
-		{% endif %}
-            </td>
-        </tr>
-    {% endfor %}
+					{% if not usuario.nivelCargo %}
+  				{% elif usuario.status %}
+  		  		<a href="{{url_for('inativarUsuario', token = token, id = usuario.id)}}">Inativar</a>
+	  			{% else %}
+	  	  		<a href="{{url_for('ativarUsuario', token = token, id = usuario.id)}}">Ativar</a>
+      		{% endif %}
+			{% endif %}
+      </td>
+      </tr>
+		{% endfor %}
 </table>
 {% endblock %}
 

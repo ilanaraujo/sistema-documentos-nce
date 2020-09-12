@@ -1,26 +1,13 @@
 {% extends "base.html" %}
 
 {% block head %}
-{% if novo %}
 <title>Cadastro de Usuários</title>
-{% else %}
-<title>Alteração de Usuário</title>
-{% endif %}
 {% endblock %}
 
 {% block header %}
 <li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
 <li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
-<li class="sidenav__list-item"><a href="/criardocumento" class="bottom">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="/listaoficios" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="/listacomunicacoesinternas" class="bottom">Comunicações Internas</a></li>
-{% if novo %}
-<li class="sidenav__list-item"><a href="/criarusuario" class="bottom current">Criar Usuário</a></li>
-{% else %}
-<li class="sidenav__list-item"><a href="/criarusuario" class="bottom">Criar Usuário</a></li>
-{% endif %}
-<li class="sidenav__list-item"><a href="/listausuarios" class="bottom">Lista de Usuários</a></li>
-<li class="sidenav__list-item"><a href="/listausuariosnovos" class="bottom">Lista de Usuários Novos</a></li>
+<li class="sidenav__list-item"><a href="/cadastrarusuario" class="bottom current">Cadastrar Usuário</a></li>
 {% endblock %}
 
 {% block body %}
