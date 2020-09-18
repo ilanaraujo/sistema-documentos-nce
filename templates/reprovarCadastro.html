@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Reprovação de Usuário</title>
+{% endblock %}
+
+{% block header %}
+<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
+<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+  <form class="form-content" method="POST">
+    <fieldset id="paper">
+      <div class="page">
+		
+		<div align="center">
+			<div align="left">
+ 			<h3>Cadastro reprovado:</h3>
+			<h5>E-mail: {{ user.email }}<br>
+			<h5>Nome: {{ user.nome }}<br>
+			<h5>Cargo: {{ user.cargo }}<br>
+			<h5>Nível do cargo: {{ nivelCargo[user.nivelCargo] }}<br>
+			<h5>Área: {{ user.area }}<br>
+			<h5>Divisão: {{ user.divisao }}</h5>
+			<br>
+			<h3>Insira os campos preenchidos incorretamente:</h3>
+			<textarea rows="5" cols="50" type="text" id="motivos" name="motivos">Motivos</textarea>
+			</div>
+		<br><br><br><br><br><br>
+		<br><br><br><br><br><br>
+
+		</div>
+			</div>
+    </fieldset>
+  <div id="envelope">
+    <label class="field a-field a-field_a2">
+      <input type="submit" value="Reprovar Usuário" class="envelope-button">
+    </label>
+  </div>
+  <div class="envelope__back"></div>
+</form>
+</div>
+{% endblock %}

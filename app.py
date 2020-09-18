@@ -77,6 +77,17 @@ class usuarioNovo(db.Model):
     def __repr__(self):
         return '<usuarioNovo %r>' % self.id
 
+# Usuários cujas informações foram atualizadas
+class usuarioEditado(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer)
+    email = db.Column(db.String(30))
+    nome = db.Column(db.String(50))
+    cargo = db.Column(db.String(30))
+    nivelCargo = db.Column(db.Integer)
+    area = db.Column(db.String(30))
+    divisao = db.Column(db.String(30))
+
 # Ofício
 class oficio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -178,16 +189,45 @@ def token_todos(f):
         return f(token, usuario_logado, *args, **kwargs)
     return decorador
 
-# Nota: alterar os [return 'algum erro'] pra flash messages nas próprias páginas
+def token_senha(f):
+    @wraps(f)
+    def decorador(*args, **kwargs):
+        token = request.args.get('token')
+        if not token:
+            flash("Sem token de acesso.")
+            return redirect('/login')
+        try:
+            token_dec = jwt.decode(token, app.config['SECRET_KEY'])
+            usuario = usuario.query.filter_by(email = token_dec['email']).first()
+            senha = token_dec['senha']
+        except:
+            flash("Token inválido.")
+            return redirect('/login')
+        if not senha:
+            return "sem senha"
+        return f(*args, **kwargs)
+    return decorador
 
 # Página inicial
 @app.route("/")
 def inicio():
     return render_template('inicio.html')
 
-@app.route("/teste")
-def teste():
-    return render_template('reprovarUsuario.html', user = False)
+@app.route("/redefinirsenha")
+@token_senha
+def redefinirSenha():
+    return "teste de senha"
+
+@app.route("/teste2")
+def teste2():
+    token = jwt.encode({
+        'email' : 'email',
+        'exp' : datetime.utcnow() + timedelta(minutes = 10)
+        },
+        app.config['SECRET_KEY']
+    )
+    return redirect(url_for('teste', token = token))
+
 
 # Página para a criação de um usuário novo
 @app.route('/cadastrarusuario', methods=['GET', 'POST'])
@@ -258,27 +298,32 @@ def login():
 @app.route('/perfil')
 @token_todos
 def perfil(token, usuario_logado):
-    return render_template('perfil.html', usuario = usuario_logado, token = token)
+    cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
+    return render_template('perfil.html', nivelCargo = cargos, usuario = usuario_logado, token = token)
 
 # Página para a alteração dos dados do usuário logado
 @app.route('/editarusuario', methods=['POST', 'GET'])
 @token_normal
 def editarUsuario(token, usuario_logado):
     if request.method == 'POST':
-        usuario_logado.nome = request.form['nome']
-        usuario_logado.nivelCargo = request.form['nivelCargo']
-        usuario_logado.cargo = request.form['cargo']
-        usuario_logado.area = request.form['area']
-        usuario_logado.divisao = request.form['divisao']
+        usuario_editado = usuarioEditado(
+            nome = request.form['nome'],
+            nivelCargo = request.form['nivelCargo'],
+            cargo = request.form['cargo'],
+            area = request.form['area'],
+            divisao = request.form['divisao'],
+            id_usuario = usuario_logado.id,
+            email = usuario_logado.email
+        )
         try:
             db.session.commit()
-            flash("Atualização do cadastro realizada com sucesso.")
+            flash("Solicitação de atualização realizada com sucesso.")
             return redirect(url_for('perfil', token = token))
         except:
             flash("Ocorreu um erro ao atualizar o cadastro.")
             return redirect(url_for('perfil', token = token))
     else:
-        return render_template('editarUsuario.html', user = usuario_editado, token = token)
+        return render_template('editarUsuario.html', user = usuario_logado, token = token)
 
 # Página de criação de um novo documento
 @app.route("/criardocumento", methods=['POST', 'GET'])
@@ -452,7 +497,8 @@ def baixarDocumento(token, usuario_logado, tipo, id):
 @token_adm
 def listaUsuarios(token):
     usuarios = usuario.query.order_by(usuario.id).all()
-    return render_template('listaUsuarios.html',token = token, usuarios = usuarios, novo=False)
+    cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
+    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista = "padrao")
 
 # Inativa um usuário aprovado pelo administrador
 @app.route('/inativarusuario')
@@ -473,7 +519,7 @@ def inativarUsuario(token, id):
     return redirect(url_for('listaUsuarios', token = token))
 
 # Reativa um usuário aprovado pelo administrador
-@app.route('/ativarusuario/<int:id>')
+@app.route('/ativarusuario')
 @token_adm
 def ativarUsuario(token, id):
     usuarioInativo = usuario.query.get_or_404(id)
@@ -482,7 +528,7 @@ def ativarUsuario(token, id):
         db.session.commit()
         flash("Usuário ativado.")
         #msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
-        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi ativado e está pronto para uso no sistema!\n Atenciosamente, coordenação NCE' %(usuarioInativo.nome,usuarioInativo.email))
+        #msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema.\nAtenciosamente, coordenação NCE' %(usuarioInativo.nome))
         #mail.send(msg)
     except:
         flash("Ocorreu um erro ao ativar o usuario")
@@ -494,7 +540,8 @@ def ativarUsuario(token, id):
 @token_adm
 def listaUsuariosNovos(token):
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
-    return render_template('listaUsuarios.html', token = token, usuarios = usuarios, novo=True)
+    cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
+    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista="novo")
 
 # Aprova um usuário novo, excluíndo-o da lista de usuários não aprovados e adicionando-o
 # à lista de usuários aprovados pelo administrador
@@ -517,28 +564,83 @@ def aprovarCadastro(token, id):
         db.session.commit()
         flash("Cadastro aprovado.")
         #msg = Message(subject='Ativação no sistema', recipients= [usuarioAprovadoNovo.email])
-        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi aprovado e ativo  pronto para uso no sistema!\nAtenciosamente, coordenação NCE' %(usuarioAprovadoNovo.nome, usuarioAprovadoNovo.email))
+        #msg.body = ("Olá %s,\n seu cadastro no SisDocNCE foi aprovado e você já pode usar o sistema. \nAtenciosamente, coordenação NCE' %(usuarioAprovado.nome))
         #mail.send(msg)
     except:
         flash("Ocorreu um erro ao aprovar o cadastro.")
     return redirect(url_for('listaUsuariosNovos', token = token))
 
 # Reprova o cadastro de um usuário novo, excluíndo-o da lista de usuários não aprovados
-@app.route('/reprovarcadastro')
+@app.route('/reprovarcadastro', methods = ['GET', 'POST'])
 @token_adm
 def reprovarCadastro(token, id):
-    usuarioReprovado = usuarioNovo.query.get_or_404(id)
+    cadastroReprovado = usuarioNovo.query.get_or_404(id)
+    if request.method == 'POST':
+        motivos = request.form['motivos']
+        try:
+            db.session.delete(usuarioReprovado)
+            db.session.commit()
+            flash("Cadastro reprovado")
+            #msg = Message(subject='Ativação no sistema', recipients= [usuarioReprovado.email])
+            #msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reprovado pelo seguinte motivo:\n%s\nAtenciosamente, coordenação NCE' %(cadastroReprovado.nome, motivos, usuarioReprovado))
+            #mail.send(msg)
+        except:
+            flash("Ocorreu um erro ao reprovar o cadastro.")
+        return redirect(url_for('listaUsuariosNovos', token = token))
+    else:
+        cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
+        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = cadastroReprovado, token = token)
+
+# Lista de usuários que solicitaram atualização no cadastro
+@app.route('/listausuarioseditados')
+@token_adm
+def listaUsuariosEditados(token):
+    usuarios = usuarioEditado.query.order_by(usuarioEditado.id).all()
+    cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
+    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista = "editado")
+
+# Aprova a atualização no cadastro
+@app.route('/aprovacadastroatualizado')
+@token_adm
+def aprovaCadastroAtualizado(token, id):
+    cadastroNovo = usuarioEditado.query.get_or_404(id)
+    cadastro = usuario.query.get_or_404(id = cadastroNovo.id_usuario)
+    cadastro.nome = cadastroNovo.nome
+    cadastro.cargo = cadastroNovo.cargo
+    cadastro.nivelCargo = cadastroNovo.nivelCargo
+    cadastro.area = cadastroNovo.area
+    cadastro.divisao = cadastroNovo.divisao
     try:
-        db.session.delete(usuarioReprovado)
+        db.session.delete(cadastroNovo)
         db.session.commit()
-        flash("Cadastro reprovado")
-        #msg = Message(subject='Ativação no sistema', recipients= [usuarioReprovado.email])
-        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi reprovado no sistema!\nAtenciosamente, coordenação NCE' %(usuarioReprovado.nome, usuarioReprovado.email))
+        flash("Atualização deCadastro de {a} realizada com sucesso".format(a = cadastroNovo.email))
+        #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
+        #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE foi atualizado com sucesso.\n\nAtenciosamente,\ncoordenação NCE' %(usuarioAprovadoNovo.nome))
         #mail.send(msg)
-        # Adicionar página pra selecionar os campos preenchidos incorretamente
     except:
-        flash("Ocorreu um erro ao reprovar o cadastro.")
-    return redirect(url_for('listaUsuariosNovos', token = token))
+        flash("ocorreu um erro ao atualizar o cadastro de {a}.".format(a = cadastroNovo.email))
+    return redirect(url_for('listaUsuariosEditados', token = token))
+
+# Reprova a atualização no cadastro
+@app.route('/reprovacadastroatualizado', methods = ['GET', 'POST'])
+@token_adm
+def reprovaCadastroAtualizado(token, id):
+    cadastroReprovado = usuarioEditado.query.get_or_404(id)
+    if request.method == 'POST':
+        motivos = request.form['motivos']
+        try:
+            db.session.delete(cadastroReprovado)
+            db.commit()
+            #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
+            #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE não pôde ser atualizado pelo seguinte motivo:\n%s\n\nAtenciosamente,\n coordenação NCE' %(usuarioAprovadoNovo.nome, motivos))
+            #mail.send(msg)
+            flash("Reprovação da atualização de Cadastro realizada com sucesso")
+        except:
+            flash("Ocorreu um erro ao reprovar a atualização de cadastro")
+        return redirect(url_for('listaUsuariosEditados', token = token))
+    else:
+        cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
+        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = cadastroReprovado, token = token)
 
 # Função pra criar o Usuário Administrador
 def cria_adm():
