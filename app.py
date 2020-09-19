@@ -198,36 +198,17 @@ def token_senha(f):
             return redirect('/login')
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
-            usuario = usuario.query.filter_by(email = token_dec['email']).first()
-            senha = token_dec['senha']
+            email = token_dec['email']
         except:
             flash("Token inválido.")
             return redirect('/login')
-        if not senha:
-            return "sem senha"
-        return f(*args, **kwargs)
+        return f(email, *args, **kwargs)
     return decorador
 
 # Página inicial
 @app.route("/")
 def inicio():
     return render_template('inicio.html')
-
-@app.route("/redefinirsenha")
-@token_senha
-def redefinirSenha():
-    return "teste de senha"
-
-@app.route("/teste2")
-def teste2():
-    token = jwt.encode({
-        'email' : 'email',
-        'exp' : datetime.utcnow() + timedelta(minutes = 10)
-        },
-        app.config['SECRET_KEY']
-    )
-    return redirect(url_for('teste', token = token))
-
 
 # Página para a criação de um usuário novo
 @app.route('/cadastrarusuario', methods=['GET', 'POST'])
@@ -292,6 +273,52 @@ def login():
     else:
         return render_template('login.html')
 
+# Esqueceu a senha
+@app.route('/esqueceusenha', methods=['GET', 'POST'])
+def esqueceu_senha():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = usuario.query.filter_by(email=email).first()
+        if not user:
+            flash("E-mail não cadastrado")
+            return render_template('esqueceuSenha.html')
+        token = jwt.encode({
+            'email' : user.email,
+            'exp' : datetime.utcnow() + timedelta(minutes = 10)
+            },
+            app.config['SECRET_KEY']
+        )
+        #msg = Message(subject='Alteração de Senha', recipients= [email])
+        #msg.body = ('Olá %s, para redefinir a sua senha, clique no link abaixo:\n localhost:5000/redefinirsenha?token=%s \nCaso você não tenha feito essa solicitação, ignore esse e-mail.\n\nAtenciosamente, coordenação NCE' %(user.nome, token))
+        #mail.send(msg)
+        #flash("E-mail para a redefinição da senha enviado.")
+        #return redirect('/login')
+        return redirect(url_for('redefinirSenha', token = token))
+    return render_template('esqueceuSenha.html')
+
+# --------------------- Token para redefinir senha necessário ------------------- #
+
+@app.route("/redefinirsenha", methods=['GET', 'POST'])
+@token_senha
+def redefinirSenha(email):
+    if request.method == 'POST':
+        senhaNova = request.form['senhaNova']
+        senhaConfirma = request.form['senhaConfirma']
+        if not (senhaNova == senhaConfirma):
+            flash("A senha nova deve ser igual à confirmação.")
+            return render_template('redefinirSenha.html', login = False)
+        user = usuario.query.filter_by(email = email).first()
+        senhaAlterada = generate_password_hash(senhaNova)
+        user.senha = senhaAlterada
+        try:
+            db.session.commit()
+            flash("Senha alterada com sucesso.")
+        except:
+            flash("Ocorreu um erro ao alterar a senha")
+        return redirect('/login')
+    else:
+        return render_template('redefinirSenha.html', login = False)
+
 # ----------------------- Login necessário -------------------- #
 
 # Página com informações do usuário logado
@@ -300,6 +327,33 @@ def login():
 def perfil(token, usuario_logado):
     cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
     return render_template('perfil.html', nivelCargo = cargos, usuario = usuario_logado, token = token)
+
+# Página para redefinir a senha estando logado
+@app.route('/redefinirsenhalogin', methods = ['GET', 'POST'])
+@token_normal
+def redefinirSenhaLogin(token, usuario_logado):
+    if request.method == 'POST':
+        senhaAntiga = request.form['senhaAntiga']
+        if not check_password_hash(usuario_logado.senha, senhaAntiga):
+            flash("Senha incorreta.")
+            return render_template('redefinirSenha.html', login = True, token = token)
+        senhaNova = request.form['senhaNova']
+        senhaConfirma = request.form['senhaConfirma']
+        if not senhaNova == senhaConfirma:
+            flash("A senha nova deve ser igual à confirmação.")
+            return render_template('redefinirSenha.html', login = True, token = token)
+        if check_password_hash(usuario_logado.senha, senhaNova):
+            flash("A senha nova não pode ser igual a antiga")
+            return render_template('redefinirSenha.html', login = True, token = token)
+        usuario_logado.senha = generate_password_hash(senhaNova)
+        try:
+            db.session.commit()
+            flash("Senha alterada com sucesso.")
+        except:
+            flash("Ocorreu um erro ao alterar a senha")
+        return redirect(url_for('perfil', token = token))
+    else:
+        return render_template('redefinirSenha.html', login = True)
 
 # Página para a alteração dos dados do usuário logado
 @app.route('/editarusuario', methods=['POST', 'GET'])
