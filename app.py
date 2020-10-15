@@ -26,13 +26,13 @@ app = Flask("__name__")
 # Configuração do Flask-Mail
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'adm@gmail.com'
-app.config['MAIL_PASSWORD'] = 'senha'
-app.config['MAIL_DEFAULT_SENDER'] = 'adm@gmail.com'
+app.config['MAIL_USERNAME'] = 'lucasjara_97@hotmail.com'
+app.config['MAIL_PASSWORD'] = 'Chocol4te10!!'
+app.config['MAIL_DEFAULT_SENDER'] = 'lucasjara_97@hotmail.com'
 app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False
 app.config['MAIL_ASCII_ATTACHEMENTS'] = False
@@ -227,9 +227,9 @@ def cadastrarUsuario():
             divisao = request.form['divisao']
         )
         # Impede o cadastro de emails que não sejam do NCE
-        if not usuarioCadastrado.email.endswith("@nce.ufrj.br"):
-            flash("Insira um email do NCE")
-            return redirect('/cadastrarusuario')
+        #if not usuarioCadastrado.email.endswith("@nce.ufrj.br"):
+            #flash("Insira um email do NCE")
+            #return redirect('/cadastrarusuario')
 
         # Salva as informações do novo documento no 
         # BD e redireciona para o histórico
@@ -288,11 +288,11 @@ def esqueceu_senha():
             },
             app.config['SECRET_KEY']
         )
-        #msg = Message(subject='Alteração de Senha', recipients= [email])
-        #msg.body = ('Olá %s, para redefinir a sua senha, clique no link abaixo:\n localhost:5000/redefinirsenha?token=%s \nCaso você não tenha feito essa solicitação, ignore esse e-mail.\n\nAtenciosamente, coordenação NCE' %(user.nome, token))
-        #mail.send(msg)
-        #flash("E-mail para a redefinição da senha enviado.")
-        #return redirect('/login')
+        msg = Message(subject='Alteração de Senha', recipients= [user.email])
+        msg.body = ('Olá %s, para redefinir a sua senha, clique no link abaixo:\n localhost:5000/redefinirsenha?token=%s \nCaso você não tenha feito essa solicitação, ignore esse e-mail.\n\nAtenciosamente, coordenação NCE' %(user.nome, token))
+        mail.send(msg)
+        flash("E-mail para a redefinição da senha enviado.")
+        return redirect('/login')
         return redirect(url_for('redefinirSenha', token = token))
     return render_template('esqueceuSenha.html')
 
@@ -565,9 +565,9 @@ def inativarUsuario(token, id):
     try:
         db.session.commit()
         flash("Usuário inativado.")
-        #msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
-        #msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
-        #mail.send(msg)
+        msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
+        mail.send(msg)
     except:
         flash("Ocorreu um erro ao inativar o usuario.")
     return redirect(url_for('listaUsuarios', token = token))
@@ -581,9 +581,9 @@ def ativarUsuario(token, id):
     try:
         db.session.commit()
         flash("Usuário ativado.")
-        #msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
-        #msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema.\nAtenciosamente, coordenação NCE' %(usuarioInativo.nome))
-        #mail.send(msg)
+        msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
+        msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema.\nAtenciosamente, coordenação NCE' %(usuarioInativo.nome))
+        mail.send(msg)
     except:
         flash("Ocorreu um erro ao ativar o usuario")
     return redirect(url_for('listaUsuarios', token = token))
@@ -617,9 +617,9 @@ def aprovarCadastro(token, id):
         db.session.delete(usuarioAprovado)
         db.session.commit()
         flash("Cadastro aprovado.")
-        #msg = Message(subject='Ativação no sistema', recipients= [usuarioAprovadoNovo.email])
-        #msg.body = ("Olá %s,\n seu cadastro no SisDocNCE foi aprovado e você já pode usar o sistema. \nAtenciosamente, coordenação NCE' %(usuarioAprovado.nome))
-        #mail.send(msg)
+        msg = Message(subject='Aprovação de cadastro no sistema', recipients= [usuarioAprovadoNovo.email])
+        msg.body = ("Olá %s,\n seu cadastro no SisDocNCE foi aprovado e você já pode usar o sistema. \nAtenciosamente, coordenação NCE" %(usuarioAprovadoNovo.nome))
+        mail.send(msg)
     except:
         flash("Ocorreu um erro ao aprovar o cadastro.")
     return redirect(url_for('listaUsuariosNovos', token = token))
@@ -628,22 +628,23 @@ def aprovarCadastro(token, id):
 @app.route('/reprovarcadastro', methods = ['GET', 'POST'])
 @token_adm
 def reprovarCadastro(token, id):
-    cadastroReprovado = usuarioNovo.query.get_or_404(id)
+    usuarioReprovado = usuarioNovo.query.get_or_404(id)
     if request.method == 'POST':
         motivos = request.form['motivos']
         try:
+            msg = Message(subject='Reprovação de cadastro no sistema', recipients= [usuarioReprovado.email])
+            msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reprovado pelo(s) seguinte(s) motivo(s):\n%s\nAtenciosamente, coordenação NCE' %(usuarioReprovado.nome, motivos ))
+            mail.send(msg)
             db.session.delete(usuarioReprovado)
             db.session.commit()
             flash("Cadastro reprovado")
-            #msg = Message(subject='Ativação no sistema', recipients= [usuarioReprovado.email])
-            #msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reprovado pelo seguinte motivo:\n%s\nAtenciosamente, coordenação NCE' %(cadastroReprovado.nome, motivos, usuarioReprovado))
-            #mail.send(msg)
+            
         except:
             flash("Ocorreu um erro ao reprovar o cadastro.")
         return redirect(url_for('listaUsuariosNovos', token = token))
     else:
         cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = cadastroReprovado, token = token)
+        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = usuarioReprovado, token = token)
 
 # Lista de usuários que solicitaram atualização no cadastro
 @app.route('/listausuarioseditados')
@@ -665,12 +666,14 @@ def aprovaCadastroAtualizado(token, id):
     cadastro.area = cadastroNovo.area
     cadastro.divisao = cadastroNovo.divisao
     try:
+        
+        flash("Atualização deCadastro de {a} realizada com sucesso".format(a = cadastroNovo.email))
+        msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
+        msg.body = ('Olá %s,\n seu cadastro no SisDocNCE foi atualizado com sucesso.\n\nAtenciosamente,\ncoordenação NCE' %(usuarioAprovadoNovo.nome))
+        mail.send(msg)
         db.session.delete(cadastroNovo)
         db.session.commit()
-        flash("Atualização deCadastro de {a} realizada com sucesso".format(a = cadastroNovo.email))
-        #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
-        #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE foi atualizado com sucesso.\n\nAtenciosamente,\ncoordenação NCE' %(usuarioAprovadoNovo.nome))
-        #mail.send(msg)
+
     except:
         flash("ocorreu um erro ao atualizar o cadastro de {a}.".format(a = cadastroNovo.email))
     return redirect(url_for('listaUsuariosEditados', token = token))
@@ -683,11 +686,12 @@ def reprovaCadastroAtualizado(token, id):
     if request.method == 'POST':
         motivos = request.form['motivos']
         try:
+            msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
+            msg.body = ('Olá %s,\n seu cadastro no SisDocNCE não pôde ser atualizado pelo seguinte motivo:\n%s\n\nAtenciosamente,\n coordenação NCE' %(usuarioAprovadoNovo.nome, motivos))
+            mail.send(msg)
             db.session.delete(cadastroReprovado)
             db.commit()
-            #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
-            #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE não pôde ser atualizado pelo seguinte motivo:\n%s\n\nAtenciosamente,\n coordenação NCE' %(usuarioAprovadoNovo.nome, motivos))
-            #mail.send(msg)
+            
             flash("Reprovação da atualização de Cadastro realizada com sucesso")
         except:
             flash("Ocorreu um erro ao reprovar a atualização de cadastro")
