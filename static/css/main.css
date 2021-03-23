@@ -85,6 +85,19 @@ header, footer {
     transform: translateY(1px);
 }
 
+a.form-link {
+    text-decoration: none;
+    color: #6b9da1;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    margin-bottom: -10px;
+}
+
+a.form-link:hover {
+    color: #5d878a;
+}
+
 a.bottom {
     position: relative;
 }
