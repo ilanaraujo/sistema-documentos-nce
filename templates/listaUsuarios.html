@@ -77,9 +77,9 @@
 					<br>
 					<a href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}">Reprovar Cadastro</a>
 				{% elif lista == "editado" %}
-					<a href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}">Aprovar Cadastro</a>
+					<a href="{{url_for('aprovaCadastroAtualizado', token = token, id = usuario.id)}}">Aprovar Cadastro</a>
 					<br>
-					<a href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}">Reprovar Cadastro</a>
+					<a href="{{url_for('reprovaCadastroAtualizado', token = token, id = usuario.id)}}">Reprovar Cadastro</a>
       	{% endif %}
       </td>
       </tr>
