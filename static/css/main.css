@@ -11,7 +11,7 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 50px 1fr 40px;
-    grid-template-areas: "header" "main" "footer";
+    grid-template-areas: "header""main" "footer";
     height: 100vh;
 }
 
@@ -87,15 +87,14 @@ header, footer {
 
 a.form-link {
     text-decoration: none;
-    color: #6b9da1;
-    font-weight: bold;
+    color: #616161;
     font-size: 16px;
     letter-spacing: 0.5px;
     margin-bottom: -10px;
 }
 
 a.form-link:hover {
-    color: #5d878a;
+    color: #000;
 }
 
 a.bottom {
@@ -286,6 +285,11 @@ a.bottom:hover:before {
     justify-content: center;
     width: 100%;
     min-height: 100%;
+}
+
+.form-content#login-page,
+.form-content#signup-page {
+    width: 100vw;
 }
 
 /* Piece of paper (fieldset) */
@@ -515,6 +519,14 @@ a.bottom:hover:before {
     transition: all 0.4s ease 0s;
 }
 
+.alert {
+    background-color: #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    
+}
+
+
+
 /* Non-mobile styles, 750px breakpoint */
 
 @media only screen and (min-width: 46.875em) {
@@ -523,6 +535,17 @@ a.bottom:hover:before {
         grid-template-columns: 240px 1fr;
         grid-template-areas: "header header" "sidenav main" "sidenav footer";
     }
+
+    .grid-container#login-page,
+    .grid-container#signup-page {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 50px 1fr 40px;
+        grid-template-areas: "header""main" "footer";
+        height: 100vh;
+        width: 100vw!important;
+    } 
+
     .sidenav {
         position: relative;
         /*fixed position on mobile*/

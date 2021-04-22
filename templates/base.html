@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="keywords" content="documentos, nce, doc">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta name="keywords" content="documentos, nce, doc" />
 
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+        <script src="https://unpkg.com/feather-icons"></script>
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 
-    <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="stylesheet" href="/static/css/main.css" />
 
-    {% block head %}{% endblock %}
-    
-</head>
-<body>
-    <div class="grid-container">
-        <div class="menu-icon" openNav>
-            <i class="fas fa-bars"></i>
-        </div>
-        <header>
-            <h1 id="titulo" class="header__name"><a href="#home">Gerador de documentos</a></h1>
-            <a href="/login" class="header__login" title="Login"><i class="feather-icon__login" data-feather="user"></i></a>
-        </header>
-        <aside id="sidenav" class="sidenav">
-            <div class="close-icon" closeNav>
-                <i class="fas fa-times"></i>
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        <div class="grid-container">
+            <div class="menu-icon" openNav>
+                <i class="fas fa-bars"></i>
             </div>
-            <ul class="sidenav__list">
-                {% block header %}{% endblock %} <!--Toggling active classes-->
-            </ul>
-        </aside>
+            <header>
+                <h1 id="titulo" class="header__name">
+                    <a href="#home">Gerador de documentos</a>
+                </h1>
+                <a href="/login" class="header__login" title="Login"
+                    ><i class="feather-icon__login" data-feather="user"></i
+                ></a>
+            </header>
 
-        <main class="main">
-				{% with mensagens = get_flashed_messages() %}
-				  {% if mensagens %}
-					<div class="alert alert-warning">
-						<ul class=flashes>
-						{% for mensagem in mensagens %}
-						<li>{{mensagem}}</li>
-						{% endfor %}
-					</ul>
-				</div>
-				{% endif %}
-				{% endwith %}
-            {% block body %}{% endblock %}
-        </main>
-        <footer class="footer__copyright">&copy Gerador de documentos</footer>
-    </div>
-    <script src="/static/script/script.js"></script>
-</body>
+            <aside id="sidenav" class="sidenav">
+                <div class="close-icon" closeNav>
+                    <i class="fas fa-times"></i>
+                </div>
+                <ul class="sidenav__list">
+                    {% block header %}{% endblock %}
+                    <!--Toggling active classes-->
+                </ul>
+            </aside>
+
+            <main class="main">
+                {% with mensagens = get_flashed_messages() %} {% if mensagens %}
+                <div class="alert alert-warning">
+                    <ul class="flashes">
+                        {% for mensagem in mensagens %}
+                        <li>{{mensagem}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %} {% endwith %} {% block body %}{% endblock %}
+            </main>
+            <footer class="footer__copyright">
+                &copy Gerador de documentos
+            </footer>
+        </div>
+        <script src="/static/script/script.js"></script>
+    </body>
+
 </html>
-

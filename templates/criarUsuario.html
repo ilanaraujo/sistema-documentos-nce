@@ -4,14 +4,10 @@
 <title>Cadastro de Usuários</title>
 {% endblock %}
 
-{% block header %}
-<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
-<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
-{% endblock %}
 
 {% block body %}
 
-<div class="container">
+<div class="container" id="signup-page">
   <form class="form-content" method="POST">
     <fieldset id="paper">
       <div class="page">
@@ -113,4 +109,5 @@
   <div class="envelope__back"></div>
 </form>
 </div>
+
 {% endblock %}

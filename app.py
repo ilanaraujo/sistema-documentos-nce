@@ -208,7 +208,7 @@ def token_senha(f):
 # Página inicial
 @app.route("/")
 def inicio():
-    return render_template('inicio.html')
+    return render_template('login.html')
 
 # Página para a criação de um usuário novo
 @app.route('/cadastrarusuario', methods=['GET', 'POST'])

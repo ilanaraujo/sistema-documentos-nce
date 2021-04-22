@@ -3,6 +3,11 @@
 
  //Toogle sidebar - mobile devices
  nav = document.querySelector('#sidenav')
+ 
+ loginPage = document.querySelector('#login-page')
+ signupPage = document.querySelector('#signup-page')
+ gridContainer = document.querySelector('.grid-container')
+ formContent = document.querySelector('.form-content')
 
  //Add and remove provided class names
  function openNav() {
@@ -15,3 +20,13 @@
  close.onclick = closeNav
  const open = document.querySelector('[openNav]')
  open.onclick = openNav
+
+ if (loginPage) {
+    gridContainer.setAttribute('id', 'login-page')
+    formContent.setAttribute('id', 'login-page')
+ }
+
+ if (signupPage) {
+    gridContainer.setAttribute('id', 'signup-page')
+    formContent.setAttribute('id', 'signup-page')
+ }
