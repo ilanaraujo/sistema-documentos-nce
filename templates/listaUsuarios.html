@@ -1,90 +1,115 @@
-{% extends "base.html" %}
-
-{% block head %}
-{% if lista == padrao %}
+{% extends "base.html" %} {% block head %} {% if lista == padrao %}
 <title>Usuários Cadastrados</title>
 {% elif lista == novo %}
 <title>Usuários Pendentes</title>
 {% elif lista == editado %}
 <title>Cadastros Atualizados</title>
-{% endif %}
-{% endblock %}
-
-{% block header %}
-<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
-
-{% if lista == "padrao" %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuarios', token = token)}}" class="bottom current">Usuários</a></li>
-{% else %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuarios', token = token)}}" class="bottom">Usuários</a></li>
-{% endif %}
-
-{% if lista == "novo" %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom current">Usuários Novos</a></li>
-{% else %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom">Usuários Novos</a></li>
-{% endif %}
-
-{% if lista == "editado" %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosEditados', token = token)}}" class="bottom current">Cadastros Atualizados</a></li>
-{% else %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosEditados', token = token)}}" class="bottom">Cadastros Atualizados</a></li>
-{% endif %}
-
-{% endblock %}
-
-
-{% block body %}
+{% endif %} {% endblock %} {% block header %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a>
+</li>
 
 {% if lista == "padrao" %}
-	<h1 align="center">Usuários Cadastrados</h1>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuarios', token = token)}}" class="bottom current"
+        >Usuários</a
+    >
+</li>
+{% else %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuarios', token = token)}}" class="bottom"
+        >Usuários</a
+    >
+</li>
+{% endif %} {% if lista == "novo" %}
+<li class="sidenav__list-item">
+    <a
+        href="{{url_for('listaUsuariosNovos', token = token)}}"
+        class="bottom current"
+        >Novos Usuários</a
+    >
+</li>
+{% else %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom"
+        >Novos Usuários</a
+    >
+</li>
+{% endif %} {% if lista == "editado" %}
+<li class="sidenav__list-item">
+    <a
+        href="{{url_for('listaUsuariosEditados', token = token)}}"
+        class="bottom current"
+        >Atualização de Cadastros</a
+    >
+</li>
+{% else %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuariosEditados', token = token)}}" class="bottom"
+        >Atualização de Cadastros</a
+    >
+</li>
+{% endif %} {% endblock %} {% block body %} {% if lista == "padrao" %}
+<h1 align="center">Usuários Cadastrados</h1>
 {% elif lista == "novo" %}
-	<h1 align="center">Usuários Pendentes</h1>
+<h1 align="center">Usuários Pendentes</h1>
 {% elif lista == "editado" %}
-	<h1 align="center">Cadastros Atualizados</h1>
+<h1 align="center">Cadastros Atualizados</h1>
 {% endif %}
 
 <table border="2" align="center">
     <tr>
-      <th>e-mail</th>
-      <th>Nome</th>
-			<th>Nível do Cargo</th>
-      <th>Cargo</th>
-      <th>Área</th>
-      <th>Divisão</th>
-			<th>Opções</th>
+        <th>e-mail</th>
+        <th>Nome</th>
+        <th>Nível do Cargo</th>
+        <th>Cargo</th>
+        <th>Área</th>
+        <th>Divisão</th>
+        <th>Ações</th>
     </tr>
     {% for usuario in usuarios %}
-        <tr>
-            <td>{{ usuario.email }}</td>
-            <td>{{ usuario.nome }}</td>
-            <td>{{ nivelCargo[usuario.nivelCargo] }}</td>	
-	    			<td>{{ usuario.cargo }}</td>
-            <td>{{ usuario.area }}</td>
-            <td>{{ usuario.divisao }}</td>
-            <td>
-    		{% if lista == "padrao" %}
-					{% if usuario.nivelCargo %}
-  					{% if usuario.status %}
-  		  			<a href="{{url_for('inativarUsuario', token = token, id = usuario.id)}}">Inativar</a>
-	  				{% else %}
-	  	  			<a href="{{url_for('ativarUsuario', token = token, id = usuario.id)}}">Ativar</a>
-      			{% endif %}
-					{% endif %}
-				
-				{% elif lista == "novo" %}
-					<a href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}">Aprovar Cadastro</a>
-					<br>
-					<a href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}">Reprovar Cadastro</a>
-				{% elif lista == "editado" %}
-					<a href="{{url_for('aprovaCadastroAtualizado', token = token, id = usuario.id)}}">Aprovar Cadastro</a>
-					<br>
-					<a href="{{url_for('reprovaCadastroAtualizado', token = token, id = usuario.id)}}">Reprovar Cadastro</a>
-      	{% endif %}
-      </td>
-      </tr>
-		{% endfor %}
+    <tr>
+        <td>{{ usuario.email }}</td>
+        <td>{{ usuario.nome }}</td>
+        <td>{{ nivelCargo[usuario.nivelCargo] }}</td>
+        <td>{{ usuario.cargo }}</td>
+        <td>{{ usuario.area }}</td>
+        <td>{{ usuario.divisao }}</td>
+        <td>
+            {% if lista == "padrao" %} {% if usuario.nivelCargo %} {% if
+            usuario.status %}
+            <a
+                href="{{url_for('inativarUsuario', token = token, id = usuario.id)}}"
+                >Inativar</a
+            >
+            {% else %}
+            <a
+                href="{{url_for('ativarUsuario', token = token, id = usuario.id)}}"
+                >Ativar</a
+            >
+            {% endif %} {% endif %} {% elif lista == "novo" %}
+            <a
+                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}"
+                >Aprovar Cadastro</a
+            >
+            <br />
+            <a
+                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}"
+                >Reprovar Cadastro</a
+            >
+            {% elif lista == "editado" %}
+            <a
+                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}"
+                >Aprovar Cadastro</a
+            >
+            <br />
+            <a
+                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}"
+                >Reprovar Cadastro</a
+            >
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
 </table>
 {% endblock %}
-
-
