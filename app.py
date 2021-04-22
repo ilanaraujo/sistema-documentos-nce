@@ -26,13 +26,13 @@ app = Flask("__name__")
 # Configuração do Flask-Mail
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
-app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'adm@email.com'
-app.config['MAIL_PASSWORD'] = 'senhaadm'
-app.config['MAIL_DEFAULT_SENDER'] = 'adm@email.com'
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'lucasjara1997@gmail.com'
+app.config['MAIL_PASSWORD'] = '4mora65!!10'
+app.config['MAIL_DEFAULT_SENDER'] = 'lucasjara1997@gmail.com'
 app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False
 app.config['MAIL_ASCII_ATTACHEMENTS'] = False
@@ -170,7 +170,8 @@ def token_adm(f):
         else:
             return f(token, *args, **kwargs)
     return decorador
-
+    
+#Token de uso geral dos usuários ~*ERRO!
 def token_todos(f):
     @wraps(f)
     def decorador(*args, **kwargs):
@@ -183,7 +184,7 @@ def token_todos(f):
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
             usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         except:
-            flash("Token inválido")
+            flash("Token inválido: todos")
             return redirect('/login')
 
         return f(token, usuario_logado, *args, **kwargs)
@@ -370,6 +371,7 @@ def editarUsuario(token, usuario_logado):
             email = usuario_logado.email
         )
         try:
+            db.session.add(usuario_editado)
             db.session.commit()
             flash("Solicitação de atualização realizada com sucesso.")
             return redirect(url_for('perfil', token = token))
@@ -566,7 +568,7 @@ def inativarUsuario(token, id):
         db.session.commit()
         flash("Usuário inativado.")
         msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
-        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema!\n Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
+        msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema! Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
         mail.send(msg)
     except:
         flash("Ocorreu um erro ao inativar o usuario.")
@@ -582,7 +584,7 @@ def ativarUsuario(token, id):
         db.session.commit()
         flash("Usuário ativado.")
         msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
-        msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema.\nAtenciosamente, coordenação NCE' %(usuarioInativo.nome))
+        msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema. Atenciosamente, coordenação NCE' %(usuarioInativo.nome))
         mail.send(msg)
     except:
         flash("Ocorreu um erro ao ativar o usuario")
@@ -659,7 +661,7 @@ def listaUsuariosEditados(token):
 @token_adm
 def aprovaCadastroAtualizado(token, id):
     cadastroNovo = usuarioEditado.query.get_or_404(id)
-    cadastro = usuario.query.get_or_404(id = cadastroNovo.id_usuario)
+    cadastro = usuario.query.get_or_404(cadastroNovo.id_usuario)
     cadastro.nome = cadastroNovo.nome
     cadastro.cargo = cadastroNovo.cargo
     cadastro.nivelCargo = cadastroNovo.nivelCargo
@@ -668,9 +670,9 @@ def aprovaCadastroAtualizado(token, id):
     try:
         
         flash("Atualização deCadastro de {a} realizada com sucesso".format(a = cadastroNovo.email))
-        msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
-        msg.body = ('Olá %s,\n seu cadastro no SisDocNCE foi atualizado com sucesso.\n\nAtenciosamente,\ncoordenação NCE' %(usuarioAprovadoNovo.nome))
-        mail.send(msg)
+        #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
+        #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE foi atualizado com sucesso.\n\nAtenciosamente,\ncoordenação NCE' %(usuarioAprovadoNovo.nome))
+        #mail.send(msg)
         db.session.delete(cadastroNovo)
         db.session.commit()
 
@@ -686,11 +688,11 @@ def reprovaCadastroAtualizado(token, id):
     if request.method == 'POST':
         motivos = request.form['motivos']
         try:
-            msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
-            msg.body = ('Olá %s,\n seu cadastro no SisDocNCE não pôde ser atualizado pelo seguinte motivo:\n%s\n\nAtenciosamente,\n coordenação NCE' %(usuarioAprovadoNovo.nome, motivos))
-            mail.send(msg)
+            #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
+            #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE não pôde ser atualizado pelo seguinte motivo:\n%s\n\nAtenciosamente,\n coordenação NCE' %(usuarioAprovadoNovo.nome, motivos))
+            #mail.send(msg)
             db.session.delete(cadastroReprovado)
-            db.commit()
+            db.session.commit()
             
             flash("Reprovação da atualização de Cadastro realizada com sucesso")
         except:
