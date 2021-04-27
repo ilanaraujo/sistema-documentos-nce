@@ -473,7 +473,7 @@ def listaOficios(token, usuario_logado):
 @token_normal
 def listaComInternas(token, usuario_logado):
     # Comunicações internas ordenadas do mais novo para o mais antigo
-    comInternas = comInterna.query.order_by(oficio.id.desc()).all()
+    comInternas = comInterna.query.order_by(comInterna.id.desc()).all()
     nome = usuario_logado.nome
     area = usuario_logado.area
     divisao = usuario_logado.divisao
