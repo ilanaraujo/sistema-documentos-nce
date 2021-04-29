@@ -291,6 +291,10 @@ a.bottom:hover:before {
     width: 90% !important;
 }
 
+.passwordRecovery button {
+    background-color: #d1c4e9;
+}
+
 .form-content#login-page,
 .form-content#signup-page {
     width: 100vw;
