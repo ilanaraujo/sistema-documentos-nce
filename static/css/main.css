@@ -1,12 +1,17 @@
 @import url("https://fonts.googleapis.com/css?family=Julius+Sans+One&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap");
 
 @import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
 
+:root {
+    --header-height: 50px;
+    --footer-height: 40px;
+}
+
 body {
     /* font-family: "Julius Sans One", arial; */
-    font-family: 'Lora', serif;
+    font-family: "Lora", serif;
     margin: 0;
 }
 
@@ -15,9 +20,13 @@ body {
 .grid-container {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 50px 1fr 40px;
+    grid-template-rows: var(--header-height) 1fr var(--footer-height);
     grid-template-areas: "header" "main" "footer";
     height: 100vh;
+}
+
+.container {
+    height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 
 header {
@@ -132,7 +141,6 @@ a.bottom:hover:before {
     display: flex;
     justify-content: center;
     margin-top: 3em;
-
 }
 
 .card-perfil {
@@ -256,6 +264,31 @@ a.bottom:hover:before {
     justify-content: center;
     width: 100%;
     min-height: 100%;
+}
+
+.container .form-content.form-content.passwordRecovery {
+    justify-content: center;
+    align-items: center;
+}
+
+.passwordRecovery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    min-width: 300px;
+    max-width: 800px;
+    height: 200px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(48, 39, 39, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.passwordRecovery input[type="email"],
+.passwordRecovery button {
+    min-width: 300px;
+    margin-top: 20px;
+    width: 90% !important;
 }
 
 .form-content#login-page,
@@ -511,7 +544,7 @@ a.bottom:hover:before {
     font-size: 1.1em;
     background-color: #f8d7da;
     border-color: #f5c6cb;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
 }
 
 .alert ul.flashes {
@@ -570,6 +603,10 @@ a.bottom:hover:before {
     /*Breaks out main cards into two columns */
     .main-cards {
         column-count: 2;
+    }
+
+    .passwordRecovery input[type="email"] {
+        min-width: 500px;
     }
 }
 

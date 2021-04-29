@@ -9,7 +9,30 @@
 {% block body %}
 <div class="container" id="login-page">
   <form class="form-content" method="POST">
-    <fieldset id="paper">
+
+
+
+
+    <div class="passwordRecovery">
+      <label class="field a-field a-field_a3">
+          <input name="email" type="email" 
+          class="field__input a-field__input" 
+          placeholder="Seu e-mail NCE" required>
+          
+          <span class="a-field__label-wrap">
+            <span class="a-field__label">E-mail</span>
+          </span>
+        </label>
+      
+        <button class="envelope-button">Recuperar acesso</button>
+    </div>
+
+
+
+
+
+
+    <!-- <fieldset id="paper">
       <div class="page">
 
         <label class="field a-field a-field_a3">
@@ -42,10 +65,15 @@
     </fieldset>
     <div id="envelope">
       <button class="envelope-button">Login</button>
-   </div>
+   </div> -->
+
+
+
+
   </form>
-  <div class="envelope__back"></div>
 </div>
+
+
 
 
 {% endblock %}
