@@ -26,12 +26,12 @@ app = Flask("__name__")
 # Configuração do Flask-Mail
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
-app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'adm@email.com'
-app.config['MAIL_PASSWORD'] = 'senhaadm'
+app.config['MAIL_USERNAME'] = 'keithfmacedo@gmail.com'
+app.config['MAIL_PASSWORD'] = 'alicinha'
 app.config['MAIL_DEFAULT_SENDER'] = 'adm@email.com'
 app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False

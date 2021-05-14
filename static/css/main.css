@@ -609,7 +609,7 @@ a.bottom:hover:before {
         column-count: 2;
     }
 
-    .passwordRecovery input[type="email"] {
+    .passwordRecovery input {
         min-width: 500px;
     }
 }
