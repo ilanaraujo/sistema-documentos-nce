@@ -1,119 +1,180 @@
-{% extends "base.html" %}
-
-{% block head %}
+{% extends "base.html" %} {% block head %}
 <title>Cadastro de Documentos</title>
-{% endblock %}
-
-{% block header %}
-<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom current">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
-{% endblock %}
-
-{% block body %}
+{% endblock %} {% block header %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a>
+</li>
+<li class="sidenav__list-item">
+    <a
+        href="{{url_for('criarDocumento', token = token)}}"
+        class="bottom current"
+        >Criar Documento</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaOficios', token = token)}}" class="bottom"
+        >Ofícios</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaComInternas', token = token)}}" class="bottom"
+        >Comunicações Internas</a
+    >
+</li>
+{% endblock %} {% block body %}
 
 <div class="container">
-  <form class="form-content" method="POST">
-    <fieldset id="paper">
-      <div class="page">
+    <div class="envelope-container">
+        <form class="form-content" method="POST">
+            <fieldset id="paper">
+                <div class="page">
+                    <!-- Área do doc -->
+                    <label class="field a-field a-field_a1">
+                        <input
+                            name="area"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Área do documento"
+                            required
+                        />
 
-        <!-- Área do doc -->
-        <label class="field a-field a-field_a1">
-          <input name="area" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Área do documento" required>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Área</span>
+                        </span>
+                    </label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Área</span>
-          </span>
-        </label>
+                    <!-- Tipo do doc -->
+                    <label class="document-type" align="left">
+                        <a>Tipo de Documento</a>
+                        <br />
+                        <input
+                            type="radio"
+                            id="oficio"
+                            name="tipo"
+                            value="oficio"
+                        />
+                        <label for="Ofício">Ofício</label>
+                        <br />
+                        <input
+                            type="radio"
+                            id="comunicacao-interna"
+                            name="tipo"
+                            value="comInterna"
+                        />
+                        <label for="Comunicação Interna"
+                            >Comunicação Interna</label
+                        >
+                    </label>
 
-        <!-- Tipo do doc -->
-        <label class="document-type" align="left">
-	  <a>Tipo de Documento</a>
-	  <br>
-          <input type="radio" id="oficio" name="tipo" value="oficio">
-          <label for="Ofício">Ofício</label>
-	  <br>
-          <input type="radio" id="comunicacao-interna" name="tipo" value="comInterna">
-          <label for="Comunicação Interna">Comunicação Interna</label>
-        </label>
+                    <!-- Destinatário do doc -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            type="text"
+                            name="destinatario"
+                            class="field__input a-field__input"
+                            placeholder="Destinatário do documento"
+                            required
+                        />
 
-        <!-- Destinatário do doc -->
-        <label class="field a-field a-field_a2">
-          <input type="text" name="destinatario"
-          class="field__input a-field__input" 
-          placeholder="Destinatário do documento" required>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Destinatário</span>
+                        </span>
+                    </label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Destinatário</span>
-          </span>
-        </label>
+                    <!-- Assunto do doc -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="assunto"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Assunto do documento"
+                            required
+                        />
 
-        <!-- Assunto do doc -->
-        <label class="field a-field a-field_a2">
-          <input name="assunto" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Assunto do documento" required>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Assunto</span>
+                        </span>
+                    </label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Assunto</span>
-          </span>
-        </label>
-        
-        <!-- Emissor do doc -->
-        <label class="field a-field a-field_a2">
-          <input name="emissor" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Emissor do documento" required>
+                    <!-- Emissor do doc -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="emissor"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Emissor do documento"
+                            required
+                        />
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Emissor</span>
-          </span>
-        </label>
-        
-        <label class="field a-field a-field_a2">
-          <input name="cargo" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Cargo do emissor" required>
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Cargo</span>
-          </span>
-        </label>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Emissor</span>
+                        </span>
+                    </label>
 
-	<label class="field a-field a-field_a3">
-	  <textarea name="mensagem" class="field__input a-field__input"
-	  rows="10" cols="30" wrap="soft" placeholder="Corpo da Mensagem" required></textarea>
-	  <span class="a-field__label-wrap">
-	    <span class="a-field__label">Corpo da Mensagem</span>
-	  </span>
-	</label>
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="cargo"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Cargo do emissor"
+                            required
+                        />
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Cargo</span>
+                        </span>
+                    </label>
 
-  <label class="field a-field a-field_a2">
-	  <textarea name="observacao" class="field__input a-field__input"
-	  rows="10" cols="30" wrap="soft" placeholder="Observação"></textarea>
-	  <span class="a-field__label-wrap">
-	    <span class="a-field__label">Observação</span>
-	  </span>
-	</label>
+                    <label class="field a-field a-field_a3">
+                        <textarea
+                            name="mensagem"
+                            class="field__input a-field__input"
+                            rows="10"
+                            cols="30"
+                            wrap="soft"
+                            placeholder="Corpo da Mensagem"
+                            required
+                        ></textarea>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label"
+                                >Corpo da Mensagem</span
+                            >
+                        </span>
+                    </label>
 
-      </div>
-      
-      
+                    <label class="field a-field a-field_a2">
+                        <textarea
+                            name="observacao"
+                            class="field__input a-field__input"
+                            rows="10"
+                            cols="30"
+                            wrap="soft"
+                            placeholder="Observação"
+                        ></textarea>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Observação</span>
+                        </span>
+                    </label>
+                </div>
 
+                <!-- Achar solução melhor kkkkk -->
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            </fieldset>
 
+            <div class="envelope">
+              <div id="envelope__front">
+                  <label class="field a-field a-field_a2">
+                      <input
+                          type="submit"
+                          value="Gerar Documento"
+                          class="envelope-button"
+                      />
+                  </label>
+              </div>
+              <div class="envelope__back"></div>
 
-      <!-- Achar solução melhor kkkkk -->
-      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            </div>
+        </form>
 
-    </fieldset>
-  <div id="envelope">
-    <label class="field a-field a-field_a2">
-      <input type="submit" value="Gerar Documento" class="envelope-button">
-    </label>
-  </div>
-  <div class="envelope__back"></div>
-</form>
+    </div>
 </div>
 {% endblock %}

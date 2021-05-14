@@ -3,14 +3,35 @@
 
  //Toogle sidebar - mobile devices
  nav = document.querySelector('#sidenav')
- 
- loginPage = document.querySelector('#login-page')
- signupPage = document.querySelector('#signup-page')
+ navIcon = document.querySelector('#nav-icon')
  gridContainer = document.querySelector('.grid-container')
  formContent = document.querySelector('.form-content')
- navIcon = document.querySelector('#nav-icon')
+ loginPage = document.querySelector('#login-page')
+ signupPage = document.querySelector('#signup-page')
+ 
+ 
+if (!loginPage || !signupPage) {
+    nav.classList.add("active")
+}
 
- //Add and remove provided class names
+ if (loginPage) {
+    gridContainer.setAttribute('id', 'login-page__container')
+    formContent.setAttribute('id', 'login-page__form')
+    
+    // sem item de logout pra páginas iniciais
+    navIcon.parentNode.removeChild(navIcon)
+}
+
+ if (signupPage) {
+    nav.style.width = "0"
+    gridContainer.setAttribute('id', 'signup-page__container')
+    formContent.setAttribute('id', 'signup-page__form')
+
+    navIcon.parentNode.removeChild(navIcon)
+ }
+
+
+// abrir e fechar navegação no mobile
  function openNav() {
      nav.classList.toggle('active')
  }
@@ -22,17 +43,4 @@
  const open = document.querySelector('[openNav]')
  open.onclick = openNav
 
- if (loginPage) {
-    gridContainer.setAttribute('id', 'login-page')
-    formContent.setAttribute('id', 'login-page')
-
-    // sem item de logout pra páginas iniciais
-    navIcon.parentNode.removeChild(navIcon)
- }
-
- if (signupPage) {
-    gridContainer.setAttribute('id', 'signup-page')
-    formContent.setAttribute('id', 'signup-page')
-
-    navIcon.parentNode.removeChild(navIcon)
- }
+ 

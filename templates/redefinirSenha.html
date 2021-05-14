@@ -14,43 +14,49 @@
 {% block body %}
 
 <div class="container">
-  <form class="form-content" method="POST">
-    <fieldset id="paper">
-      <div class="page">
+  <div class="envelope-container">
+  
 
-        <label class="field a-field a-field_a1">
-            <input name="senhaNova" type="password" 
-            class="field__input a-field__input" 
-            placeholder="Digite sua nova senha" required>
-            
-            <span class="a-field__label-wrap">
-              <span class="a-field__label">Nova Senha</span>
-            </span>
-          </label>
+    <form class="form-content" method="POST">
+      <fieldset id="paper">
+        <div class="page">
 
           <label class="field a-field a-field_a1">
-            <input name="senhaConfirma" type="password" 
-            class="field__input a-field__input" 
-            placeholder="Confirme a nova senha escolhida" required>
+              <input name="senhaNova" type="password" 
+              class="field__input a-field__input" 
+              placeholder="Digite sua nova senha" required>
             
-            <span class="a-field__label-wrap">
-              <span class="a-field__label">Confirmação de Senha</span>
-            </span>
-          </label>
-        
+              <span class="a-field__label-wrap">
+                <span class="a-field__label">Nova Senha</span>
+              </span>
+            </label>
 
+            <label class="field a-field a-field_a1">
+              <input name="senhaConfirma" type="password" 
+              class="field__input a-field__input" 
+              placeholder="Confirme a nova senha escolhida" required>
+            
+              <span class="a-field__label-wrap">
+                <span class="a-field__label">Confirmação de Senha</span>
+              </span>
+            </label>
+    
+        <!-- Achar solução melhor kkkkk -->
+        <br><br><br><br><br><br><br><br><br><br>
 
+      </fieldset>
 
-      <!-- Achar solução melhor kkkkk -->
-      <br><br><br><br><br><br><br><br><br><br>
+      <div class="envelope">
+          <div id="envelope__front">
+            <label class="field a-field a-field_a2">
+              <input type="submit" value="Alterar senha" class="envelope-button">
+            </label>
+          </div>
+          <div class="envelope__back"></div>
+      </div>
+    </form>
 
-    </fieldset>
-  <div id="envelope">
-    <label class="field a-field a-field_a2">
-      <input type="submit" value="Alterar senha" class="envelope-button">
-    </label>
   </div>
-  <div class="envelope__back"></div>
-</form>
+
 </div>
 {% endblock %}

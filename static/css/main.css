@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css?family=Julius+Sans+One&display=swap");
+
+/* CSS é mobile first -> ajustes são para tela mobile */
 
 @import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap");
 
@@ -10,7 +11,6 @@
 }
 
 body {
-    /* font-family: "Julius Sans One", arial; */
     font-family: "Lora", serif;
     margin: 0;
 }
@@ -225,14 +225,14 @@ a.bottom:hover:before {
 
 /* envelope container */
 
-#envelope {
+#envelope__front {
     z-index: 10;
     left: 50%;
     top: 95%;
     transform: translate(-50%, -50%);
     position: absolute;
     width: 380px;
-    bottom: -20px;
+    /* bottom: -20px; */
     height: 180px;
     background: url("https://image.freepik.com/fotos-gratis/brown-textura-de-papel-reciclado_1253-79.jpg");
     -webkit-box-shadow: 0px -2px 10px 0px rgba(105, 105, 105, 1);
@@ -246,13 +246,11 @@ a.bottom:hover:before {
 
 .envelope__back {
     z-index: 1;
-    left: 50%;
-    top: 85%;
     transform: translate(-50%, -50%);
     position: absolute;
     width: 380px;
-    bottom: -20px;
-    height: 180px;
+    bottom: -200px;
+    height: 50px;
     background: url("https://image.freepik.com/fotos-gratis/brown-textura-de-papel-reciclado_1253-79.jpg");
 }
 
@@ -495,6 +493,17 @@ a.bottom:hover:before {
     --fieldBorderColorActive: #673ab7;
 }
 
+.envelope-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* height: 100%; */
+}
+
+.envelope {
+    position: relative;
+}
+
 .page {
     box-sizing: border-box;
     width: 100%;
@@ -564,9 +573,10 @@ a.bottom:hover:before {
         grid-template-areas: "header header" "sidenav main" "sidenav footer";
     }
 
-    .grid-container#login-page,
-    .grid-container#signup-page {
+    .grid-container#login-page__container,
+    .grid-container#signup-page__container {
         grid-template-columns: 1fr;
+        width: 100vw;
         grid-template-areas: "header" "main" "footer";
     }
 
@@ -575,6 +585,15 @@ a.bottom:hover:before {
         /*fixed position on mobile*/
         transform: translateX(0);
     }
+    
+    #sidenav {
+        width: 0px;
+    }
+
+    #sidenav.active {
+        width: 100%;
+    }
+
     .menu-icon {
         visibility: hidden;
     }
@@ -590,7 +609,7 @@ a.bottom:hover:before {
         width: 400px;
     }
 
-    #envelope {
+    #envelope__front {
         width: 520px;
         height: 240px;
     }
