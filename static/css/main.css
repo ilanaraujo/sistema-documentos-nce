@@ -249,8 +249,8 @@ a.bottom:hover:before {
     transform: translate(-50%, -50%);
     position: absolute;
     width: 380px;
-    bottom: -200px;
-    height: 50px;
+    bottom: -190px;
+    height: 230px;
     background: url("https://image.freepik.com/fotos-gratis/brown-textura-de-papel-reciclado_1253-79.jpg");
 }
 

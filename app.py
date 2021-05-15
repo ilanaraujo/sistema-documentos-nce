@@ -209,6 +209,7 @@ def token_senha(f):
 # Página inicial
 @app.route("/")
 def inicio():
+    return redirect('/login')
     return render_template('inicio.html')
 
 # Página para a criação de um usuário novo
