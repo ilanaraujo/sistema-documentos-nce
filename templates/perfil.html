@@ -1,40 +1,69 @@
-{% extends "base.html" %}
-
-{% block head %}
+{% extends "base.html" %} {% block head %}
 <title>Inicio</title>
-<link rel="shortcut icon" href="/static/img/logo_nce.jpg" style="width: fit-content;">
-{% endblock %}
-
-{% block header %}
-<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom current">Perfil</a></li>
+<link
+    rel="shortcut icon"
+    href="/static/img/logo_nce.jpg"
+    style="width: fit-content"
+/>
+{% endblock %} {% block header %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('perfil', token = token)}}" class="bottom current"
+        >Perfil</a
+    >
+</li>
 
 {% if usuario.nivelCargo %}
-<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('criarDocumento', token = token)}}" class="bottom"
+        >Criar Documento</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaOficios', token = token)}}" class="bottom"
+        >Ofícios</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaComInternas', token = token)}}" class="bottom"
+        >Comunicações Internas</a
+    >
+</li>
 {% else %}
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuarios', token = token)}}" class="bottom">Usuários</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom">Usuários Novos</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaUsuariosEditados', token = token)}}" class="bottom">Cadastros Atualizados</a></li>
-{% endif %}
-
-{% endblock %}
-
-{% block body %}
-	<h3>E-mail: {{usuario.email}}</h3>
-	<h3>Nome: {{usuario.nome}}</h3>
-	<h3>Cargo: {{usuario.cargo}}</h3>
-	{% if usuario.nivelCargo %}
-	<h3>Nível do Cargo: {{ nivelCargo[usuario.nivelCargo] }}</h3>
-	{% endif %}
-	<h3>Área: {{usuario.area}}</h3>
-	<h3>Divisão: {{usuario.divisao}}</h3>
-	{% if usuario.nivelCargo %}
-	<br>
-	<br>
-	<a href="{{url_for('editarUsuario', token = token)}}">Atualizar Cadastro</a>
-	<br>
-	<br>
-	<a href="{{url_for('redefinirSenhaLogin', token = token)}}">Alterar Senha</a>
-	{% endif %}
-{% endblock %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuarios', token = token)}}" class="bottom"
+        >Usuários</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom"
+        >Usuários Pendentes</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuariosEditados', token = token)}}" class="bottom"
+        >Pedidos de atualização</a
+    >
+</li>
+{% endif %} {% endblock %} {% block body %}
+<div class="card-container">
+	<div class="card-perfil">
+		<h3>E-mail: {{usuario.email}}</h3>
+		<h3>Nome: {{usuario.nome}}</h3>
+		<h3>Cargo: {{usuario.cargo}}</h3>
+		{% if usuario.nivelCargo %}
+		<h3>Nível do Cargo: {{ nivelCargo[usuario.nivelCargo] }}</h3>
+		{% endif %}
+		<h3>Área: {{usuario.area}}</h3>
+		<h3>Divisão: {{usuario.divisao}}</h3>
+		{% if usuario.nivelCargo %}
+		<br />
+		<br />
+		<a href="{{url_for('editarUsuario', token = token)}}">Atualizar Cadastro</a>
+		<br />
+		<br />
+		<a href="{{url_for('redefinirSenhaLogin', token = token)}}"
+			>Alterar Senha</a
+		>
+	</div>
+</div>
+{% endif %} {% endblock %}

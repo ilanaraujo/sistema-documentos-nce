@@ -5,49 +5,57 @@
 <link rel="shortcut icon" href="/static/img/logo_nce.jpg" style="width: fit-content;">
 {% endblock %}
 
-{% block header %}
-<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
-<li class="sidenav__list-item"><a href="/login" class="bottom current">Login</a></li>
-<li class="sidenav__list-item"><a href="/cadastrarusuario" class="bottom">Cadastrar Usuário</a></li>
-{% endblock %}
 
 {% block body %}
-<div class="container">
-  <form class="form-content" method="POST">
-    <fieldset id="paper">
-      <div class="page">
+<div class="container" id="login-page">
+  <div class="envelope-container">
 
-        <label class="field a-field a-field_a3">
-          <input name="email" type="email" 
-          class="field__input a-field__input" 
-          placeholder="Seu e-mail NCE" required>
-          
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">E-mail</span>
-          </span>
+    <form class="form-content" method="POST">
+      <fieldset id="paper">
+        <div class="page">
+  
+          <label class="field a-field a-field_a3">
+            <input name="email" type="email" 
+            class="field__input a-field__input" 
+            placeholder="Seu e-mail NCE" required>
+            
+            <span class="a-field__label-wrap">
+              <span class="a-field__label">E-mail</span>
+            </span>
+          </label>
+  
+          <label class="field a-field a-field_a1">
+            <input name="senha" type="password" 
+            class="field__input a-field__input" 
+            placeholder="Sua senha de acesso ao sistema" required>
+            
+            <span class="a-field__label-wrap">
+              <span class="a-field__label">Senha</span>
+            </span>
+          </label>
+          <br>
+          <br>
+          <br>
+          <a href="/esqueceusenha" class="form-link">Esqueceu a senha?</a>
+          <a href="/cadastrarusuario" class="form-link">Não possui login? Cadastre-se!</a>
+  
+        </div>
         </label>
-
-        <label class="field a-field a-field_a1">
-          <input name="senha" type="password" 
-          class="field__input a-field__input" 
-          placeholder="Sua senha de acesso ao sistema" required>
-          
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Senha</span>
-          </span>
-        </label>
-				<br>
-				<br>
-				<br>
-				<a href="/esqueceusenha">Esqueceu a sua senha?</a>
-
+      </fieldset>
+      <div class="envelope">
+        <div id="envelope__front">
+          <button class="envelope-button">Login</button>
+       </div>
+       <div class="envelope__back"></div>
+        
       </div>
-      </label>
-    </fieldset>
-    <div id="envelope">
-      <button class="envelope-button">Login</button>
-   </div>
-  </form>
-  <div class="envelope__back"></div>
+
+    </form>
+
+  </div>
+  
 </div>
+
+
 {% endblock %}
+

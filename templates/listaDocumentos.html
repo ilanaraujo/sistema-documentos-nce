@@ -29,23 +29,22 @@
 {% endif %}
 <table border="2" align="center">
     <tr>
-        <th>Id</th>
+        <th>nº/Ano</th>
         <th>Emissor</th>
         <th>Cargo</th>
         <th>Área</th>
-				<th>Divisão</th>
         <th>Destinatário</th>
         <th>Assunto</th>
         <th>Data</th>
-        <th>Opções</th>
+        <th>Ações</th>
     </tr>
     {% for doc in documentos %}
     <tr>
+        <!-- colocar número/data ao invés do id -->
         <td>{{ doc.id }}</td>
         <td>{{ doc.emissor }}</td>
         <td>{{ doc.cargo }}</td>
         <td>{{ doc.area }}</td>
-				<td>{{ doc.divisao }}</td>
         <td>{{ doc.destinatario }}</td>
         <td>{{ doc.assunto }}</td>
         <td>{{ doc.data.date() }}</td>

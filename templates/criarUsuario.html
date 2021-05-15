@@ -1,113 +1,161 @@
-{% extends "base.html" %}
-
-{% block head %}
+{% extends "base.html" %} {% block head %}
 <title>Cadastro de Usuários</title>
-{% endblock %}
+{% endblock %} {% block body %}
 
-{% block header %}
-<li class="sidenav__list-item"><a href="/" class="bottom">Início</a></li>
-<li class="sidenav__list-item"><a href="/login" class="bottom">Login</a></li>
-<li class="sidenav__list-item"><a href="/cadastrarusuario" class="bottom current">Cadastrar Usuário</a></li>
-{% endblock %}
+<div class="container" id="signup-page">
+    <div class="envelope-container">
+        <form class="form-content" method="POST">
+            <fieldset id="paper">
+                <div class="page">
+                    <!-- email -->
+                    <label class="field a-field a-field_a1">
+                        <input
+                            name="email"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="E-mail do Usuário"
+                            required
+                        />
 
-{% block body %}
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">E-mail</span>
+                        </span>
+                    </label>
 
-<div class="container">
-  <form class="form-content" method="POST">
-    <fieldset id="paper">
-      <div class="page">
+                    <!-- senha -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="senha"
+                            type="password"
+                            class="field__input a-field__input"
+                            placeholder="Senha do Usuário"
+                            required
+                        />
 
-        <!-- email -->
-        <label class="field a-field a-field_a1">
-          <input name="email" type="text" 
-          class="field__input a-field__input" 
-          placeholder="E-mail do Usuário" required>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Senha do Usuário</span>
+                        </span>
+                    </label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">E-mail</span>
-          </span>
-        </label>
+                    <!-- nome -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="nome"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Nome Completo"
+                            required
+                        />
 
-        <!-- senha -->
-        <label class="field a-field a-field_a2">
-          <input name="senha" type="password" 
-          class="field__input a-field__input" 
-          placeholder="Senha do Usuário" required>
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Nome Completo</span>
+                        </span>
+                    </label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Senha do Usuário</span>
-          </span>
-        </label>
+                    <!-- Nível do cargo -->
+                    <label class="document-type" align="left">
+                        <a>Tipo de Cargo</a>
+                        <br />
+                        <input
+                            type="radio"
+                            id="direcaoGeral"
+                            name="nivelCargo"
+                            value="1"
+                        />
+                        <label for="direcaoGeral">Direção Geral</label>
+                        <br />
+                        <input
+                            type="radio"
+                            id="direcaoArea"
+                            name="nivelCargo"
+                            value="2"
+                        />
+                        <label for="direcaoArea">Direção de Área</label>
+                        <br />
+                        <input
+                            type="radio"
+                            id="chefiaDivisao"
+                            name="nivelCargo"
+                            value="3"
+                        />
+                        <label for="chefiaDivisao">Chefia de Divisão</label>
+                        <br />
+                        <input
+                            type="radio"
+                            id="funcionario"
+                            name="nivelCargo"
+                            value="4"
+                        />
+                        <label for="funcionario">Outro</label>
+                    </label>
 
-        <!-- nome -->
-        <label class="field a-field a-field_a2">
-          <input name="nome" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Nome Completo" required>
+                    <!-- cargo -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="cargo"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Cargo do Usuário"
+                            required
+                        />
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Cargo do Usuário</span>
+                        </span>
+                    </label>
 
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Nome Completo</span>
-          </span>
-        </label>
-        
-	<!-- Nível do cargo -->
-	<label class="document-type" align="left">
-	  <a>Tipo de Cargo</a>
-	  <br>
-	  <input type="radio" id="direcaoGeral" name="nivelCargo" value="1">
-	  <label for="direcaoGeral">Direção Geral</label>
-	  <br>
-	  <input type="radio" id="direcaoArea" name="nivelCargo" value="2">
-	  <label for="direcaoArea">Direção de Área</label>
-	  <br>
-	  <input type="radio" id="chefiaDivisao" name="nivelCargo" value="3">
-	  <label for="chefiaDivisao">Chefia de Divisão</label>
-	  <br>
-	  <input type="radio" id="funcionario" name="nivelCargo" value="4">
-	  <label for="funcionario">Outro</label>
-	</label>
+                    <!-- area -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="area"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Área do Usuário"
+                            required
+                        />
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label">Área do Usuário</span>
+                        </span>
+                    </label>
 
-        <!-- cargo -->
-        <label class="field a-field a-field_a2">
-          <input name="cargo" type="text" 
-          class="field__input a-field__input" 
-          placeholder="Cargo do Usuário" required>
-          <span class="a-field__label-wrap">
-            <span class="a-field__label">Cargo do Usuário</span>
-          </span>
-        </label>
+                    <!-- divisao -->
+                    <label class="field a-field a-field_a2">
+                        <input
+                            name="divisao"
+                            type="text"
+                            class="field__input a-field__input"
+                            placeholder="Divisão do Usuário"
+                            required
+                        />
+                        <span class="a-field__label-wrap">
+                            <span class="a-field__label"
+                                >Divisão do Usuário</span
+                            >
+                        </span>
+                    </label>
+                </div>
+                <br />
 
-        <!-- area -->
-        <label class="field a-field a-field_a2">
-            <input name="area" type="text" 
-            class="field__input a-field__input" 
-            placeholder="Área do Usuário" required>
-            <span class="a-field__label-wrap">
-              <span class="a-field__label">Área do Usuário</span>
-            </span>
-          </label>
+                <a href="/login" class="form-link"
+                    >Já possui cadastro? Faça login!</a
+                >
 
-        <!-- divisao -->
-        <label class="field a-field a-field_a2">
-            <input name="divisao" type="text" 
-            class="field__input a-field__input" 
-            placeholder="Divisão do Usuário" required>
-            <span class="a-field__label-wrap">
-              <span class="a-field__label">Divisão do Usuário</span>
-            </span>
-          </label>
-      </div>
-
-      <!-- Achar solução melhor kkkkk -->
-      <br><br><br><br><br><br><br><br><br><br>
-
-    </fieldset>
-  <div id="envelope">
-    <label class="field a-field a-field_a2">
-      <input type="submit" value="Criar Usuário" class="envelope-button">
-    </label>
-  </div>
-  <div class="envelope__back"></div>
-</form>
+                <!-- Achar solução melhor kkkkk -->
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            </fieldset>
+            <div class="envelope">
+                <div id="envelope__front">
+                    <label class="field a-field a-field_a2">
+                        <input
+                            type="submit"
+                            value="Criar Usuário"
+                            class="envelope-button"
+                        />
+                    </label>
+                </div>
+                <div class="envelope__back"></div>
+            </div>
+        </form>
+    </div>
 </div>
+
 {% endblock %}
