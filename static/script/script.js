@@ -47,6 +47,7 @@ function openNav() {
 function closeNav() {
     nav.classList.toggle("active")
 }
+
 const close = document.querySelector("[closeNav]")
 close.onclick = closeNav
 const open = document.querySelector("[openNav]")

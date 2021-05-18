@@ -11,9 +11,8 @@
 {% if tipo == "oficio" %}
 <li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom current">Ofícios</a></li>
 <li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
-{% endif %}
 
-{% if tipo == "comInterna" %}
+{% else %}
 <li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
 <li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom current">Comunicações Internas</a></li>
 {% endif %}
