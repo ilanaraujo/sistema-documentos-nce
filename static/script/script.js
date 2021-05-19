@@ -4,6 +4,7 @@ feather.replace()
 //Toogle sidebar - mobile devices
 nav = document.querySelector("#sidenav")
 navIcon = document.querySelector("#nav-icon")
+menuIcon = document.querySelector('.menu-icon')
 gridContainer = document.querySelector(".grid-container")
 formContent = document.querySelector(".form-content")
 loginPage = document.querySelector("#login-page")
@@ -52,3 +53,4 @@ const close = document.querySelector("[closeNav]")
 close.onclick = closeNav
 const open = document.querySelector("[openNav]")
 open.onclick = openNav
+

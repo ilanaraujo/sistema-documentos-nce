@@ -241,7 +241,7 @@ def cadastrarUsuario():
             return redirect('/')
         # Caso ocorra um erro com o BD
         except:
-            flash("Occorreu um erro ao registrar o usuário")
+            flash("Occorreu um erro ao registrar o usuário", "error")
             return redirect('/cadastrarusuario')
     # Quando a página é acessada
     else:
@@ -258,7 +258,7 @@ def login():
         # E-mail e senha corretos
         if usuarioLogin and check_password_hash(usuarioLogin.senha, senha):
             if not usuario.status:
-                flash("Usuário inativo.")
+                flash("Usuário inativo.", "warning")
                 return redirect('/login')
             # Gera um token que expira após 10 minutos
             token = jwt.encode({'email' : email,
@@ -270,7 +270,7 @@ def login():
 
         # E-mail ou senha incorretos
         else:
-            flash("Dados incorretos.")
+            flash("Dados incorretos.", "error")
             return redirect('/login')
     else:
         return render_template('login.html')
@@ -282,7 +282,7 @@ def esqueceu_senha():
         email = request.form['email']
         user = usuario.query.filter_by(email=email).first()
         if not user:
-            flash("E-mail não cadastrado")
+            flash("E-mail não cadastrado", "error")
             return render_template('esqueceuSenha.html')
         token = jwt.encode({
             'email' : user.email,
@@ -293,7 +293,7 @@ def esqueceu_senha():
         msg = Message(subject='Alteração de Senha', recipients= [user.email])
         msg.body = ('Olá %s, para redefinir a sua senha, clique no link abaixo:\n localhost:5000/redefinirsenha?token=%s \nCaso você não tenha feito essa solicitação, ignore esse e-mail.\n\nAtenciosamente, coordenação NCE' %(user.nome, token))
         mail.send(msg)
-        flash("E-mail para a redefinição da senha enviado.")
+        flash("E-mail para a redefinição da senha enviado.", "success")
         return redirect('/login')
         return redirect(url_for('redefinirSenha', token = token))
     return render_template('esqueceuSenha.html')
@@ -307,16 +307,16 @@ def redefinirSenha(email):
         senhaNova = request.form['senhaNova']
         senhaConfirma = request.form['senhaConfirma']
         if not (senhaNova == senhaConfirma):
-            flash("A senha nova deve ser igual à confirmação.")
+            flash("A senha nova deve ser igual à confirmação.", "warning")
             return render_template('redefinirSenha.html', login = False)
         user = usuario.query.filter_by(email = email).first()
         senhaAlterada = generate_password_hash(senhaNova)
         user.senha = senhaAlterada
         try:
             db.session.commit()
-            flash("Senha alterada com sucesso.")
+            flash("Senha alterada com sucesso.", "success")
         except:
-            flash("Ocorreu um erro ao alterar a senha")
+            flash("Ocorreu um erro ao alterar a senha", "error")
         return redirect('/login')
     else:
         return render_template('redefinirSenha.html', login = False)
@@ -337,22 +337,22 @@ def redefinirSenhaLogin(token, usuario_logado):
     if request.method == 'POST':
         senhaAntiga = request.form['senhaAntiga']
         if not check_password_hash(usuario_logado.senha, senhaAntiga):
-            flash("Senha incorreta.")
+            flash("Senha incorreta.", "error")
             return render_template('redefinirSenha.html', login = True, token = token)
         senhaNova = request.form['senhaNova']
         senhaConfirma = request.form['senhaConfirma']
         if not senhaNova == senhaConfirma:
-            flash("A senha nova deve ser igual à confirmação.")
+            flash("A senha nova deve ser igual à confirmação.", "warning")
             return render_template('redefinirSenha.html', login = True, token = token)
         if check_password_hash(usuario_logado.senha, senhaNova):
-            flash("A senha nova não pode ser igual a antiga")
+            flash("A senha nova não pode ser igual a antiga", "warning")
             return render_template('redefinirSenha.html', login = True, token = token)
         usuario_logado.senha = generate_password_hash(senhaNova)
         try:
             db.session.commit()
-            flash("Senha alterada com sucesso.")
+            flash("Senha alterada com sucesso.", "success")
         except:
-            flash("Ocorreu um erro ao alterar a senha")
+            flash("Ocorreu um erro ao alterar a senha", "error")
         return redirect(url_for('perfil', token = token))
     else:
         return render_template('redefinirSenha.html', login = True)
@@ -374,10 +374,10 @@ def editarUsuario(token, usuario_logado):
         try:
             db.session.add(usuario_editado)
             db.session.commit()
-            flash("Solicitação de atualização realizada com sucesso.")
+            flash("Solicitação de atualização realizada com sucesso.", "success")
             return redirect(url_for('perfil', token = token))
         except:
-            flash("Ocorreu um erro ao atualizar o cadastro.")
+            flash("Ocorreu um erro ao atualizar o cadastro.", "error")
             return redirect(url_for('perfil', token = token))
     else:
         return render_template('editarUsuario.html', user = usuario_logado, token = token)
@@ -430,7 +430,7 @@ def criarDocumento(token, usuario_logado):
             if(tipo == 'comInterna'):
                 return redirect(url_for('listaComInternas', token = token))
         except:
-            flash("Ocorreu um erro ao salvar o documento.")
+            flash("Ocorreu um erro ao salvar o documento.", "error")
             return redirect(url_for('criarDocumento', token = token))
 
     # Quando a página é acessada
@@ -525,7 +525,7 @@ def editarDocumento(token, usuario_logado, tipo, id):
                 return redirect(url_for('listaComInternas', token = token))
         # Caso ocorra um erro com o BD
         except:
-            flash("Ocorreu um erro ao atualizar as informações do documento.")
+            flash("Ocorreu um erro ao atualizar as informações do documento.", "error")
             return redirect(url_for('editarDocumento', token = token))
     else:
         return render_template('editarDocumento.html', token = token, documento = doc)
@@ -567,12 +567,12 @@ def inativarUsuario(token, id):
     usuarioAtivo.status = False
     try:
         db.session.commit()
-        flash("Usuário inativado.")
+        flash("Usuário inativado.", "success")
         msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
         msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema! Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
         mail.send(msg)
     except:
-        flash("Ocorreu um erro ao inativar o usuario.")
+        flash("Ocorreu um erro ao inativar o usuario.", "error")
     return redirect(url_for('listaUsuarios', token = token))
 
 # Reativa um usuário aprovado pelo administrador
@@ -583,12 +583,12 @@ def ativarUsuario(token, id):
     usuarioInativo.status = True
     try:
         db.session.commit()
-        flash("Usuário ativado.")
+        flash("Usuário ativado.", "success")
         msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
         msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema. Atenciosamente, coordenação NCE' %(usuarioInativo.nome))
         mail.send(msg)
     except:
-        flash("Ocorreu um erro ao ativar o usuario")
+        flash("Ocorreu um erro ao ativar o usuario", "error")
     return redirect(url_for('listaUsuarios', token = token))
 
 
@@ -619,12 +619,12 @@ def aprovarCadastro(token, id):
         db.session.add(usuarioAprovadoNovo)
         db.session.delete(usuarioAprovado)
         db.session.commit()
-        flash("Cadastro aprovado.")
+        flash("Cadastro aprovado.", "success")
         msg = Message(subject='Aprovação de cadastro no sistema', recipients= [usuarioAprovadoNovo.email])
         msg.body = ("Olá %s,\n seu cadastro no SisDocNCE foi aprovado e você já pode usar o sistema. \nAtenciosamente, coordenação NCE" %(usuarioAprovadoNovo.nome))
         mail.send(msg)
     except:
-        flash("Ocorreu um erro ao aprovar o cadastro.")
+        flash("Ocorreu um erro ao aprovar o cadastro.", "error")
     return redirect(url_for('listaUsuariosNovos', token = token))
 
 # Reprova o cadastro de um usuário novo, excluíndo-o da lista de usuários não aprovados
@@ -640,10 +640,10 @@ def reprovarCadastro(token, id):
             mail.send(msg)
             db.session.delete(usuarioReprovado)
             db.session.commit()
-            flash("Cadastro reprovado")
+            flash("Cadastro reprovado", "success")
             
         except:
-            flash("Ocorreu um erro ao reprovar o cadastro.")
+            flash("Ocorreu um erro ao reprovar o cadastro.", "error")
         return redirect(url_for('listaUsuariosNovos', token = token))
     else:
         cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
@@ -670,7 +670,7 @@ def aprovaCadastroAtualizado(token, id):
     cadastro.divisao = cadastroNovo.divisao
     try:
         
-        flash("Atualização deCadastro de {a} realizada com sucesso".format(a = cadastroNovo.email))
+        flash("Atualização deCadastro de {a} realizada com sucesso".format(a = cadastroNovo.email), "success")
         #msg = Message(subject='Atualização de cadastro', recipients= [cadastro.email])
         #msg.body = ('Olá %s,\n seu cadastro no SisDocNCE foi atualizado com sucesso.\n\nAtenciosamente,\ncoordenação NCE' %(usuarioAprovadoNovo.nome))
         #mail.send(msg)
@@ -678,7 +678,7 @@ def aprovaCadastroAtualizado(token, id):
         db.session.commit()
 
     except:
-        flash("ocorreu um erro ao atualizar o cadastro de {a}.".format(a = cadastroNovo.email))
+        flash("ocorreu um erro ao atualizar o cadastro de {a}.".format(a = cadastroNovo.email), "error")
     return redirect(url_for('listaUsuariosEditados', token = token))
 
 # Reprova a atualização no cadastro
@@ -695,9 +695,9 @@ def reprovaCadastroAtualizado(token, id):
             db.session.delete(cadastroReprovado)
             db.session.commit()
             
-            flash("Reprovação da atualização de Cadastro realizada com sucesso")
+            flash("Reprovação da atualização de Cadastro realizada com sucesso", "success")
         except:
-            flash("Ocorreu um erro ao reprovar a atualização de cadastro")
+            flash("Ocorreu um erro ao reprovar a atualização de cadastro", "error")
         return redirect(url_for('listaUsuariosEditados', token = token))
     else:
         cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
