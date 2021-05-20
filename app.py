@@ -27,12 +27,12 @@ app = Flask("__name__")
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = '----'
-app.config['MAIL_PASSWORD'] = '-----'
-app.config['MAIL_DEFAULT_SENDER'] = '----'
+app.config['MAIL_USERNAME'] = 'email'
+app.config['MAIL_PASSWORD'] = 'senha'
+app.config['MAIL_DEFAULT_SENDER'] = 'email'
 app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False
 app.config['MAIL_ASCII_ATTACHEMENTS'] = False
@@ -619,7 +619,7 @@ def aprovarCadastro(token, id):
         db.session.add(usuarioAprovadoNovo)
         db.session.delete(usuarioAprovado)
         db.session.commit()
-        flash("Cadastro aprovado.")
+        flash("Cadastro aprovado.",'success')
         msg = Message(subject='Aprovação de cadastro no sistema', recipients= [usuarioAprovadoNovo.email])
         msg.body = ("Olá %s,\n seu cadastro no SisDocNCE foi aprovado e você já pode usar o sistema. \nAtenciosamente, coordenação NCE" %(usuarioAprovadoNovo.nome))
         mail.send(msg)
