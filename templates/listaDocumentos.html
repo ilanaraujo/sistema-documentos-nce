@@ -34,6 +34,7 @@
         <th>Área</th>
         <th>Destinatário</th>
         <th>Assunto</th>
+        <th>Observação</th>
         <th>Data</th>
         <th>Ações</th>
     </tr>
@@ -46,7 +47,9 @@
         <td>{{ doc.area }}</td>
         <td>{{ doc.destinatario }}</td>
         <td>{{ doc.assunto }}</td>
+        <td>{{ doc.observacao }}</td>
         <td>{{ doc.data.date() }}</td>
+
         <td>
           <a href="{{url_for('editarDocumento', token = token, tipo = tipo, id = doc.id)}}">Editar</a>
  	        <br>

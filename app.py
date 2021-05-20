@@ -31,7 +31,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = '----'
-app.config['MAIL_PASSWORD'] = '-----'
+app.config['MAIL_PASSWORD'] = '----'
 app.config['MAIL_DEFAULT_SENDER'] = '----'
 app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False
@@ -215,9 +215,15 @@ def inicio():
 # Página para a criação de um usuário novo
 @app.route('/cadastrarusuario', methods=['GET', 'POST'])
 def cadastrarUsuario():
+
      # Quando um novo usuário é gerado
     if request.method == 'POST':
-
+        #confere a senha e a confirmação de senha
+        senha = request.form['senha']
+        senhaConfirma = request.form['senhaConfirma']
+        if not (senha == senhaConfirma):
+            flash("A senha deve ser igual à confirmação.", "warning")
+            return redirect('/cadastrarusuario')
         # Recebe as informações passadas pelo usuário no formulário
         usuarioCadastrado = usuarioNovo(
             email = request.form['email'],
