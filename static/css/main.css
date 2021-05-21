@@ -170,6 +170,13 @@ a.perfil-button {
     transition: all 0.3s ease-in-out;
 }
 
+/* ajustando para o firefox */
+@supports (-moz-appearance:none) {
+    a.perfil-button {
+        margin-top: 20px;
+    }
+}
+
 a.perfil-button:hover {
     background-color: rgba(4, 173, 255, 0.4);
 }
