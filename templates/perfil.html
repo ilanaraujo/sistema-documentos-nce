@@ -58,12 +58,10 @@
 		{% if usuario.nivelCargo %}
 		<br />
 		<br />
-		<a href="{{url_for('editarUsuario', token = token)}}">Atualizar Cadastro</a>
+		<a href="{{url_for('editarUsuario', token = token)}}" class="perfil-button">Atualizar Cadastro</a>
 		<br />
 		<br />
-		<a href="{{url_for('redefinirSenhaLogin', token = token)}}"
-			>Alterar Senha</a
-		>
+		<a href="{{url_for('redefinirSenhaLogin', token = token)}}" class="perfil-button">Alterar Senha</a>
 	</div>
 </div>
 {% endif %} {% endblock %}
