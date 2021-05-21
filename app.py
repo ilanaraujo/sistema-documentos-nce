@@ -128,13 +128,13 @@ def token_normal(f):
         tipo = request.args.get('tipo')
         id = request.args.get('id')
         if not token:
-            flash("Sem token de acesso")
+            flash("Sem token de acesso", "error")
             return redirect('/login')
 
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
         except:
-            flash("Token inválido")
+            flash("Token inválido", "error")
             return redirect('/login')
         usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         if not usuario_logado.nivelCargo:
@@ -153,14 +153,14 @@ def token_adm(f):
         token = request.args.get('token')
         id = request.args.get('id')
         if not token:
-            flash("Sem token de acesso")
+            flash("Sem token de acesso", "error")
             return redirect('/login')
 
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
             usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         except:
-            flash("Token inválido")
+            flash("Token inválido", "error")
             return redirect('/login')
 
         if usuario_logado.nivelCargo:
@@ -177,14 +177,14 @@ def token_todos(f):
     def decorador(*args, **kwargs):
         token = request.args.get('token')
         if not token:
-            flash("Sem token de acesso")
+            flash("Sem token de acesso", "error")
             return redirect('/login')
 
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
             usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         except:
-            flash("Token inválido: todos")
+            flash("Token inválido: todos", "error")
             return redirect('/login')
 
         return f(token, usuario_logado, *args, **kwargs)
@@ -195,13 +195,13 @@ def token_senha(f):
     def decorador(*args, **kwargs):
         token = request.args.get('token')
         if not token:
-            flash("Sem token de acesso.")
+            flash("Sem token de acesso.", "error")
             return redirect('/login')
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
             email = token_dec['email']
         except:
-            flash("Token inválido.")
+            flash("Token inválido.", "error")
             return redirect('/login')
         return f(email, *args, **kwargs)
     return decorador
