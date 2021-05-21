@@ -41,7 +41,7 @@
     {% for doc in documentos %}
     <tr>
         <!-- colocar número/data ao invés do id -->
-        <td>{{ doc.id }}</td>
+        <td>{{ '{}/{}'.format(doc.id,doc.ano) }}</td>
         <td>{{ doc.emissor }}</td>
         <td>{{ doc.cargo }}</td>
         <td>{{ doc.area }}</td>

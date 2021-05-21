@@ -99,7 +99,7 @@ class oficio(db.Model):
     destinatario = db.Column(db.String(100))
     data = db.Column(db.DateTime, default=datetime.utcnow)
     mensagem = db.Column(db.String(1000))
-
+    ano = datetime.now().year
     # Retorna a id do oficio que acaba de ser gerado
     def __repr__(self):
         return '<oficio %r>' % self
@@ -115,7 +115,7 @@ class comInterna(db.Model):
     destinatario = db.Column(db.String(100))
     data = db.Column(db.DateTime, default=datetime.utcnow)
     mensagem = db.Column(db.String(1000))
-
+    ano = datetime.now().year
     # Retorna a id do oficio que acaba de ser gerado
     def __repr__(self):
         return '<comunicacaoInterna %r>' % self
@@ -542,7 +542,7 @@ def editarDocumento(token, usuario_logado, tipo, id):
 def baixarDocumento(token, usuario_logado, tipo, id):
     if tipo == "oficio":
         doc = oficio.query.get_or_404(id)
-    if tipo == "comInterna":
+    else:
         doc = comInterna.query.get_or_404(id)
 
     # Arquivo html que será convertido para PDF
