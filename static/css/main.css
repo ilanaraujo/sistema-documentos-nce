@@ -159,7 +159,8 @@ a.bottom:hover:before {
     box-shadow: 0 1px 3px rgba(48, 39, 39, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
-a.perfil-button {
+a.perfil-button,
+a.docs-button {
     font-family: "Special Elite", cursive;
     font-size: 16px;
     letter-spacing: 0.5px;
@@ -170,6 +171,9 @@ a.perfil-button {
     transition: all 0.3s ease-in-out;
 }
 
+a.docs-button {
+    margin-top: 0px;
+}
 /* ajustando para o firefox */
 @supports (-moz-appearance:none) {
     a.perfil-button {
@@ -177,7 +181,8 @@ a.perfil-button {
     }
 }
 
-a.perfil-button:hover {
+a.perfil-button:hover,
+a.docs-button:hover {
     background-color: rgba(4, 173, 255, 0.4);
 }
 

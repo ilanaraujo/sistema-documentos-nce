@@ -51,9 +51,9 @@
         <td>{{ doc.data.date() }}</td>
 
         <td>
-          <a href="{{url_for('editarDocumento', token = token, tipo = tipo, id = doc.id)}}">Editar</a>
+          <a href="{{url_for('editarDocumento', token = token, tipo = tipo, id = doc.id)}}" target="_blank" class="docs-button">Editar</a>
  	        <br>
-          <a href="{{url_for('baixarDocumento', token = token, tipo = tipo, id = doc.id)}}">Baixar</a>
+          <a href="{{url_for('baixarDocumento', token = token, tipo = tipo, id = doc.id)}}" target="_blank" class="docs-button">Baixar</a>
         </td>
         </tr>
     {% endfor %}
