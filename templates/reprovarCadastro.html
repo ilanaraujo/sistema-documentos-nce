@@ -14,6 +14,8 @@
 {% block body %}
 
 <div class="container">
+
+<div class="envelope-container">
   <form class="form-content" method="POST">
     <fieldset id="paper">
       <div class="page">
@@ -37,12 +39,17 @@
 		</div>
 			</div>
     </fieldset>
-  <div id="envelope">
-    <label class="field a-field a-field_a2">
-      <input type="submit" value="Reprovar Usuário" class="envelope-button">
-    </label>
-  </div>
-  <div class="envelope__back"></div>
+
+  <div class="envelope">
+	  <div id="envelope__front">
+		  <label class="field a-field a-field_a2">
+			<input type="submit" value="Reprovar Usuário" class="envelope-button">
+		  </label>
+	  </div>
+	  <div class="envelope__back"></div>
+</div>
 </form>
+
+</div>
 </div>
 {% endblock %}
