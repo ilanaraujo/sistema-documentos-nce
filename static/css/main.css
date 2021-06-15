@@ -160,7 +160,8 @@ a.bottom:hover:before {
 }
 
 a.perfil-button,
-a.docs-button {
+a.docs-button,
+a.user-button {
     font-family: "Special Elite", cursive;
     font-size: 16px;
     letter-spacing: 0.5px;
@@ -182,7 +183,8 @@ a.docs-button {
 }
 
 a.perfil-button:hover,
-a.docs-button:hover {
+a.docs-button:hover,
+a.user-button:hover {
     background-color: rgba(4, 173, 255, 0.4);
 }
 

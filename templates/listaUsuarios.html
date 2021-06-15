@@ -79,32 +79,32 @@
             {% if lista == "padrao" %} {% if usuario.nivelCargo %} {% if
             usuario.status %}
             <a
-                href="{{url_for('inativarUsuario', token = token, id = usuario.id)}}"
+                href="{{url_for('inativarUsuario', token = token, id = usuario.id)}}" class="user-button"
                 >Inativar</a
             >
             {% else %}
             <a
-                href="{{url_for('ativarUsuario', token = token, id = usuario.id)}}"
+                href="{{url_for('ativarUsuario', token = token, id = usuario.id)}}" class="user-button"
                 >Ativar</a
             >
             {% endif %} {% endif %} {% elif lista == "novo" %}
             <a
-                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}"
+                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}" class="user-button"
                 >Aprovar Cadastro</a
             >
             <br />
             <a
-                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}"
+                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}" class="user-button"
                 >Reprovar Cadastro</a
             >
             {% elif lista == "editado" %}
             <a
-                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}"
+                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}" class="user-button"
                 >Aprovar Cadastro</a
             >
             <br />
             <a
-                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}"
+                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}" class="user-button"
                 >Reprovar Cadastro</a
             >
             {% endif %}

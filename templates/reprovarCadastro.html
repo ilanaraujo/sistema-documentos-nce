@@ -6,9 +6,19 @@
 
 {% block header %}
 <li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuarios', token = token)}}" class="bottom">Usuários</a>
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaUsuariosNovos', token = token)}}" class="bottom">Usuários Pendentes</a>
+</li>
+<li class="sidenav__list-item">
+    <a
+        href="{{url_for('listaUsuariosEditados', token = token)}}"
+        class="bottom"
+        >Pedidos de atualização</a
+    >
+</li>
 {% endblock %}
 
 {% block body %}
