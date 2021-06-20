@@ -1,4 +1,3 @@
-
 /* CSS é mobile first -> ajustes são para tela mobile */
 
 @import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap");
@@ -9,6 +8,13 @@
     --header-height: 50px;
     --footer-height: 40px;
     --header-footer-color: #6faeb4;
+}
+
+html,
+body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
 }
 
 body {
@@ -176,7 +182,7 @@ a.docs-button {
     margin-top: 0px;
 }
 /* ajustando para o firefox */
-@supports (-moz-appearance:none) {
+@supports (-moz-appearance: none) {
     a.perfil-button {
         margin-top: 20px;
     }
@@ -544,7 +550,7 @@ a.user-button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* height: 100%; */
+    width: 100%;
 }
 
 .envelope {
@@ -554,6 +560,7 @@ a.user-button:hover {
 .page {
     box-sizing: border-box;
     width: 100%;
+    height: 70%;
     max-width: 1000px;
     margin: auto;
     padding: 15px;
@@ -644,7 +651,7 @@ a.user-button:hover {
         /*fixed position on mobile*/
         transform: translateX(0);
     }
-    
+
     #sidenav {
         width: 0px;
     }
@@ -664,20 +671,25 @@ a.user-button:hover {
     }
 
     #paper {
-        height: 500px;
-        width: 400px;
+        height: 50vh;
+        width: 480px; 
     }
 
     #envelope__front {
-        width: 520px;
-        height: 240px;
+        width: 580px;
+        /* height: 25vh; */
     }
 
     .envelope__back {
-        width: 520px;
-        height: 280px;
+        width: 580px;
+        /* height: 28vh; */
     }
 }
+
+
+/* ADAPTAR HEIGHT PAPER PRA TELAS MAIS ESTREITAS */
+
+
 
 /*Medium sized screen breakpoint (tablet, 1050px) */
 
@@ -697,8 +709,8 @@ a.user-button:hover {
 }
 
 /* adapting envelope for screens with smaller heights */
-@media only screen and (max-height: 900px) {
+/* @media only screen and (max-height: 900px) {
     .envelope-container {
         transform: scale(0.9);
     }
-}
+} */
