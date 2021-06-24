@@ -20985,7 +20985,7 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
     }
     body {
         width: 80%;
-        margin: 120px;
+        margin: 120px 120px 0 120px;
         line-height: 1.5;
         margin-top: 40px;
         font-family: "Times New Roman";
@@ -21013,6 +21013,9 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
     .meio p {
         position: relative;
         font-size: 13pt;
+    }
+    p.mensagem {
+        text-align: justify;
     }
     .centro p {
         text-align: center;
@@ -21064,8 +21067,8 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
     <br /><br />
     <br />
     <p>
-        COMUNICAÇÃO INTERNA {{ "{:04d}".format(documento.id) }}/{{documento.ano }}/{{
-        documento.area }}/NCE/UFRJ
+        COMUNICAÇÃO INTERNA {{ "{:04d}".format(documento.id) }}/{{documento.ano
+        }}/{{ documento.area }}/NCE/UFRJ
     </p>
 </div>
 {% endif %}
@@ -21078,12 +21081,15 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
 
 <div class="meio">
     <br /><br /><br />
-    <p>Ao Senhor,&nbsp; <br />{{ documento.destinatario }}</p>
+    <p>Ao Senhor&nbsp; {{ documento.destinatario }}</p>
 
     <p>Assunto:&nbsp;<b>{{ documento.assunto }} </b></p>
     <br /><br />
     <br />
-    <p>
+    <p class="mensagem">
+        <!-- separar a mensagem em parágrafos -->
+        {{ documento.mensagem }}
+
         1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         Modelo, modelo modelo modelo modelo modelo modelo modelo modelo modelo
         modelo modelo modelo modelo modelo modelo modelo modelo modelo modelo
@@ -21108,12 +21114,14 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
     <br /><br /><br /><br />
     <p>
         Atenciosamente, <br /><br /><br />
+        <br />
         <b>{{ documento.emissor }}</b> <br />{{ documento.cargo }}
     </p>
 </div>
 
 <div class="footer">
     <br /><br /><br /><br /><br /><br />
+    <br /><br />
     <p>
         Av. Athos da Silveira Ramos, 274 - Prédio do CCMN - Bloco C - Cidade
         Universitária - Ilha do Fundão<br />
