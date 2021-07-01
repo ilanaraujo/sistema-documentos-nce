@@ -1,0 +1,5 @@
+text="1. Conferir a relação a seguir, considerando os gastos em diversas áreas da DA. Foramseparados os gastos em seções, visando melhor compreensão e administração dos mesmos.\n 2. Para gastos com almoxarifado, abordagem deve seguir modelo modelo modelo modelomodelo modelo modelo modelo modelo modelo modelo modelo modelo modelomodelomodelo modelo. \n 3. Para gastos de papelaria, por sua vez seguir modelo modelomodelo  modelo  modelo  modelo  modelo  modelo  modelo  modelo  modelo  modelo  \n  4.Considerando  os  gastos  de  infraestrutura,  optou-se  por  modelo  modelo  modelo  modelomodelo  modelo  modelo  modelo  modelo modelo modelo modelo modelo modelo modelomodelo  \n  5.  E quanto aos demais,  abordagens  e  subseções  apropriadas  serãodesenvolvidas através de reuniões semanais às 10:00 na sala de reuniões B212. Confirmardisponibilidade."
+
+text = text.replace('\n', '<br />')
+
+print(text)
