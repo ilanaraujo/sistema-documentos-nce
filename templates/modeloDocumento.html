@@ -21027,21 +21027,6 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
     }
 </style>
 
-<script>
-    var parserRules = [
-        { pattern: /bold\("(.*?)"\)/g, replacement: "<b>$1</b>" },
-        { pattern: /italics\("(.*?)"\)/g, replacement: "<i>$1</i>" },
-    ]
-
-    document.querySelectorAll(".parse").forEach(function (tag) {
-        var inner = tag.innerHTML
-        parserRules.forEach(function (rule) {
-            inner = inner.replace(rule.pattern, rule.replacement)
-        })
-        tag.innerHTML = inner
-    })
-</script>
-
 <meta charset="UTF-8" />
 <title>docs</title>
 {% endblock %} {% block header %}
@@ -21101,20 +21086,13 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
     <br />3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      -->
     <p class="mensagem">
-        <!-- separar a mensagem em parágrafos -->
-        {{ "1. Conferir a relação a seguir, considerando os gastos em diversas
-        áreas da DA. Foramseparados os gastos em seções, visando melhor
-        compreensão e administração dos mesmos.\n 2. Para gastos com
-        almoxarifado, abordagem deve seguir modelo modelo modelo modelomodelo
-        modelo modelo modelo modelo modelo modelo modelo modelo
-        modelomodelomodelo modelo. \n 3. Para gastos de papelaria, por sua vez
-        seguir modelo modelomodelo modelo modelo modelo modelo modelo modelo
-        modelo modelo modelo \n 4.Considerando os gastos de infraestrutura,
-        optou-se por modelo modelo modelo modelomodelo modelo modelo modelo
-        modelo modelo modelo modelo modelo modelo modelomodelo \n 5. E quanto
-        aos demais, abordagens e subseções apropriadas serãodesenvolvidas
-        através de reuniões semanais às 10:00 na sala de reuniões B212.
-        Confirmardisponibilidade.".replace('\n', '<br />') }}
+        <ol>
+            {% for item in ' '.join(documento.mensagem.split('\\')).split() %}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li>{{ item }}</li>
+    
+            {% endfor %}
+
+        </ol>
     </p>
 </div>
 
