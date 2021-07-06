@@ -21088,11 +21088,12 @@ zsYYEVQkueEIPtrYm7qW0nrSuBphR3AJ79Hxod2ujDaCZ/zHcI+yNxVimZ+rupOTn42xyzMZAAA=)
 
     <br />3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      -->
+
+
     <p class="mensagem">
         <ol>
-            {% for item in ' '.join(documento.mensagem.split('\\')).split() %}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li>{{ item }}</li>
-    
+            {% for item in documento.mensagem.split('\\') if item %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li>{{ item }}</li>
             {% endfor %}
 
         </ol>
