@@ -304,6 +304,10 @@ a.user-button:hover {
     min-height: 100%;
 }
 
+.form-link.signup {
+    padding-bottom: 150px;
+}
+
 .container .form-content.form-content.passwordRecovery {
     justify-content: center;
     align-items: center;
