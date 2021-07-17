@@ -547,22 +547,28 @@ def baixarDocumento(token, usuario_logado, tipo, id):
     
     # Dicionário com o nome dos meses para exibição no documento
     meses = {
-        "01" : "janeiro",
-        "02" : "fevereiro",
-        "03" : "março",
-        "04" : "abril",
-        "05" : "maio",
-        "06" : "junho",
-        "07" : "julho",
-        "08" : "agosto",
-        "09" : "setembro",
-        "10" : "outubro",
-        "11" : "novembro",
-        "12" : "dezembro"
+        1 : "janeiro",
+        2 : "fevereiro",
+        3 : "março",
+        4 : "abril",
+        5 : "maio",
+        6 : "junho",
+        7 : "julho",
+        8 : "agosto",
+        9 : "setembro",
+        10 : "outubro",
+        11 : "novembro",
+        12 : "dezembro"
     }
 
+    data_formatada = "{d} de {m} de {a}".format(
+        d = doc.data.day,
+        m = meses[doc.data.month],
+        a = doc.data.year
+    )
+
     # Arquivo html que será convertido para PDF
-    res = render_template('modeloDocumento.html',tipo = tipo, documento = doc, meses = meses)
+    res = render_template('modeloDocumento.html',tipo = tipo, documento = doc, data_formatada = data_formatada)
     responsestring = pdfkit.from_string(res, False)
     response = make_response(responsestring)
     response.headers['Content-Type'] = 'application/pdf'
