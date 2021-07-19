@@ -99,12 +99,12 @@
             >
             {% elif lista == "editado" %}
             <a
-                href="{{url_for('aprovarCadastro', token = token, id = usuario.id)}}" class="user-button"
+                href="{{url_for('aprovaCadastroAtualizado', token = token, id = usuario.id)}}" class="user-button"
                 >Aprovar Cadastro</a
             >
             <br />
             <a
-                href="{{url_for('reprovarCadastro', token = token, id = usuario.id)}}" class="user-button"
+                href="{{url_for('reprovaCadastroAtualizado', token = token, id = usuario.id)}}" class="user-button"
                 >Reprovar Cadastro</a
             >
             {% endif %}
