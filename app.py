@@ -30,9 +30,9 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'keithfmacedo@poli.ufrj.br'
-app.config['MAIL_PASSWORD'] = 'alicinha'
-app.config['MAIL_DEFAULT_SENDER'] = 'keithfmacedo@poli.ufrj.br'
+app.config['MAIL_USERNAME'] = 'email@email'
+app.config['MAIL_PASSWORD'] = 'senha'
+app.config['MAIL_DEFAULT_SENDER'] = 'email@email'
 app.config['MAIL_MAX_MAILS'] = None
 app.config['MAIL_SUPRESS_SEND']  = False
 app.config['MAIL_ASCII_ATTACHEMENTS'] = False
@@ -134,7 +134,7 @@ def token_normal(f):
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
         except:
-            flash("Token inválido", "error")
+            flash("Token inválido: normal", "error")
             return redirect('/login')
         usuario_logado = usuario.query.filter_by(email = token_dec['email']).first()
         if not usuario_logado.nivelCargo:
@@ -200,8 +200,8 @@ def token_senha(f):
         try:
             token_dec = jwt.decode(token, app.config['SECRET_KEY'])
             email = token_dec['email']
-        except:
-            flash("Token inválido.", "error")
+        except Exception as e:
+            flash("Token inválido", "error")
             return redirect('/login')
         return f(email, *args, **kwargs)
     return decorador
@@ -295,9 +295,9 @@ def esqueceu_senha():
             'exp' : datetime.utcnow() + timedelta(minutes = 10)
             },
             app.config['SECRET_KEY']
-        )
+        ).decode('utf-8')
         msg = Message(subject='Alteração de Senha', recipients= [user.email])
-        msg.body = ('Olá %s, para redefinir a sua senha, clique no link abaixo:\n localhost:5000/redefinirsenha?token=%s \nCaso você não tenha feito essa solicitação, ignore esse e-mail.\n\nAtenciosamente, coordenação NCE' %(user.nome, token))
+        msg.body = ('Olá %s, para redefinir a sua senha, clique no link abaixo:\n\nlocalhost:5000/redefinirsenha?token=%s \n\nCaso você não tenha feito essa solicitação, ignore esse e-mail.\n\nAtenciosamente, coordenação NCE' %(user.nome, token))
         mail.send(msg)
         flash("E-mail para a redefinição da senha enviado.", "success")
         return redirect('/login')
