@@ -30,7 +30,31 @@
             <fieldset id="paper">
                 <div class="page">
                     <p class="required-explanation"><span class="required">*</span> campos obrigatórios</p>
-<!--                     Área do doc
+                    
+                    <!-- Tipo do doc -->
+                    <label class="document-type" align="left">
+                        <a><span class="required">*</span> Tipo de Documento</a>
+                        <br />
+                        <input
+                        type="radio"
+                        id="oficio"
+                        name="tipo"
+                        value="oficio"
+                        />
+                        <label for="Ofício">Ofício</label>
+                        <br />
+                        <input
+                        type="radio"
+                        id="comunicacao-interna"
+                        name="tipo"
+                        value="comInterna"
+                        />
+                        <label for="Comunicação Interna"
+                        >Comunicação Interna</label
+                        >
+                    </label>
+                    
+                    <!-- Área do doc -->
                     <label class="field a-field a-field_a1">
                         <input
                             name="area"
@@ -43,31 +67,7 @@
                         <span class="a-field__label-wrap">
                             <span class="a-field__label"><span class="required">*</span> Área</span>
                         </span>
-                    </label> -->
-
-                    <!-- Tipo do doc -->
-                    <label class="document-type" align="left">
-                        <a><span class="required">*</span> Tipo de Documento</a>
-                        <br />
-                        <input
-                            type="radio"
-                            id="oficio"
-                            name="tipo"
-                            value="oficio"
-                        />
-                        <label for="Ofício">Ofício</label>
-                        <br />
-                        <input
-                            type="radio"
-                            id="comunicacao-interna"
-                            name="tipo"
-                            value="comInterna"
-                        />
-                        <label for="Comunicação Interna"
-                            >Comunicação Interna</label
-                        >
                     </label>
-
                     <!-- Destinatário do doc -->
                     <label class="field a-field a-field_a2">
                         <input
@@ -127,6 +127,7 @@
                         </span>
                     </label>
 
+                    <p class="required-explanation"> Utilize \\ no texto quando desejar um novo parágrafo</p>
                     <!-- Corpo da mensagem -->
                     <label class="field a-field a-field_a2">
                         <textarea
@@ -161,7 +162,13 @@
                     </label>
                 </div>
 
-                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br />
+
             </fieldset>
 
             <div class="envelope">
