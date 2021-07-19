@@ -1,0 +1,12 @@
+requests==2.22.0
+Flask==1.1.2
+oauthlib==3.1.0
+pyOpenSSL
+Flask-Login
+flask_sqlalchemy==2.5.1
+pdfkit==0.6.1
+wkhtmltopdf
+Flask-WTF
+flask_wtf
+pyjwt==1.7.1
+flask_mail==0.9.1
