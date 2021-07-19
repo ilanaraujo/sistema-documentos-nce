@@ -237,7 +237,7 @@ a.user-button:hover {
     background-color: #fff;
     transform: translateX(-245px);
     /* transition: all 0.6s ease-in-out; */
-    background-image: url("https://cdn.inspirationhut.net/wp-content/uploads/2014/09/paper-fibres.jpg");
+    background-image: url(../img/textura-papel.png);
 }
 
 /* The active class is toggled on hamburger and close icon clicks */
@@ -274,7 +274,7 @@ a.user-button:hover {
     width: 380px;
     /* bottom: -20px; */
     height: 180px;
-    background: url("https://image.freepik.com/fotos-gratis/brown-textura-de-papel-reciclado_1253-79.jpg");
+    background: url(../img/textura-envelope.png);
     -webkit-box-shadow: 0px -2px 10px 0px rgba(105, 105, 105, 1);
     -moz-box-shadow: 0px -2px 10px 0px rgba(105, 105, 105, 1);
     box-shadow: 0px -2px 10px 0px rgba(105, 105, 105, 1);
@@ -291,7 +291,7 @@ a.user-button:hover {
     width: 380px;
     bottom: -190px;
     height: 230px;
-    background: url("https://image.freepik.com/fotos-gratis/brown-textura-de-papel-reciclado_1253-79.jpg");
+    background: url(../img/textura-envelope.png);
 }
 
 .form-content {
