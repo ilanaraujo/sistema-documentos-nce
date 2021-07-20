@@ -595,7 +595,7 @@ def inativarUsuario(token, id):
     usuarioAtivo.status = False
     try:
         db.session.commit()
-        flash("Usuário inativado.", "success")
+        flash("Usuário inativado com sucesso", "success")
         msg = Message(subject='Desativação  no sistema', recipients= [usuarioAtivo.email])
         msg.body = ('Olá sr/sra. %s, seu cadastro com o email: %s  foi desativado do sistema! Atenciosamente, coordenação NCE' %( usuarioAtivo.nome, usuarioAtivo.email ))
         mail.send(msg)
@@ -668,7 +668,7 @@ def reprovarCadastro(token, id):
             mail.send(msg)
             db.session.delete(usuarioReprovado)
             db.session.commit()
-            flash("Cadastro reprovado", "success")
+            flash("Cadastro reprovado com sucesso", "success")
             
         except:
             flash("Ocorreu um erro ao reprovar o cadastro.", "error")
