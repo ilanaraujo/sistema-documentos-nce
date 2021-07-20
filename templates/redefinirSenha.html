@@ -20,7 +20,8 @@
     <form class="form-content" method="POST">
       <fieldset id="paper">
         <div class="page">
-
+          
+          {% if login %}
           <label class="field a-field a-field_a1">
             <input name="senhaAntiga" type="password" 
             class="field__input a-field__input" 
@@ -30,6 +31,8 @@
               <span class="a-field__label">Senha Antiga</span>
             </span>
           </label>
+
+          {% endif %}
 
           <label class="field a-field a-field_a1">
               <input name="senhaNova" type="password" 
