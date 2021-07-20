@@ -329,7 +329,6 @@ a.user-button:hover {
     text-transform: uppercase;
     text-decoration: none;
     background-color: rgba(103, 58, 183, 0.6);
-
 }
 
 .passwordRecovery button:hover {
@@ -600,7 +599,6 @@ a.form-link {
     letter-spacing: 0.5px;
     margin-bottom: -10px;
     transition: all 0.1s ease 0s;
-
 }
 
 a.form-link:hover {
@@ -624,6 +622,7 @@ a.envelope-link:hover {
 .alert-container {
     display: flex;
     justify-content: center;
+    animation: fadeOut 5s forwards;
 }
 
 .alert {
@@ -658,6 +657,29 @@ a.envelope-link:hover {
     color: #721c24;
     background-color: #f8d7da;
     border-color: #f5c6cb;
+}
+
+@-webkit-keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.fadeOut {
+    -webkit-animation-name: fadeOut;
+    animation-name: fadeOut;
 }
 
 /* Non-mobile styles, 750px breakpoint */
@@ -741,3 +763,5 @@ a.envelope-link:hover {
         transform: scale(0.9);
     }
 } */
+
+
