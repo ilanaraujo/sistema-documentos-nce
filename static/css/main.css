@@ -323,7 +323,17 @@ a.user-button:hover {
 }
 
 .passwordRecovery button {
-    background-color: #d1c4e9;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: rgba(103, 58, 183, 0.6);
+
+}
+
+.passwordRecovery button:hover {
+    background-color: rgba(103, 58, 183, 0.8);
 }
 
 .form-content#login-page,
@@ -578,9 +588,8 @@ a.user-button:hover {
 
 .envelope-button:hover {
     cursor: pointer;
-    color: #ffffff !important;
-    background: #d1c4e9;
-    border-color: #d1c4e9 !important;
+    color: #fff !important;
+    background-color: rgba(92, 92, 92, 0.4);
     transition: all 0.4s ease 0s;
 }
 
