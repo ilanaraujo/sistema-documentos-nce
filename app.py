@@ -611,7 +611,7 @@ def ativarUsuario(token, id):
     usuarioInativo.status = True
     try:
         db.session.commit()
-        flash("Usuário ativado.", "success")
+        flash("Usuário ativado com sucesso", "success")
         msg = Message(subject='Ativação no sistema', recipients= [usuarioInativo.email])
         msg.body = ('Olá %s, seu cadastro no SisDocNCE foi reativado e você pode voltar a usar o sistema. Atenciosamente, coordenação NCE' %(usuarioInativo.nome))
         mail.send(msg)
