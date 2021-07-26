@@ -13,10 +13,13 @@
 
 {% block body %}
 
+{% if login %}
 <div class="container">
+{% else %}
+<div class="container" id="signup-page">
+{% endif %}
   <div class="envelope-container">
   
-
     <form class="form-content" method="POST">
       <fieldset id="paper">
         <div class="page">

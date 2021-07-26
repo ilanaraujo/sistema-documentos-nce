@@ -7,7 +7,7 @@
 :root {
     --header-height: 50px;
     --footer-height: 40px;
-    --header-footer-color: #6faeb4;
+    --header-footer-color: #67a1a7;
 }
 
 html,
@@ -622,7 +622,7 @@ a.envelope-link:hover {
 .alert-container {
     display: flex;
     justify-content: center;
-    animation: fadeOut 5s forwards;
+    animation: fadeOut 10s forwards;
 }
 
 .alert {
