@@ -46,7 +46,7 @@ header {
 
 header h1 {
     font-style: italic;
-    font-size: 30px;
+    font-size: 35px;
     color: #fff;
 }
 
@@ -143,14 +143,30 @@ a.bottom:hover:before {
     border-radius: 2px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
+    justify-content: flex-start;
     margin: 1rem;
     position: relative;
     min-width: 300px;
     min-height: 300px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(48, 39, 39, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    padding: 50px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.card-perfil p {
+    font-size: 1.1em;
+}
+
+.card-perfil p span.title {
+    margin-right: 5px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.card
+
+.card-perfil p span.content {
+    float: right;
 }
 
 a.perfil-button,
@@ -220,7 +236,7 @@ a.user-button:hover {
     overflow-y: auto;
     -webkit-box-shadow: 4px 0px 5px 0px rgba(163, 163, 163, 1);
     -moz-box-shadow: 4px 0px 5px 0px rgba(163, 163, 163, 1);
-    box-shadow: 4px 0px 5px 0px rgba(163, 163, 163, 1);
+    box-shadow: 2px 0px 3px 0px rgba(163, 163, 163, 1);
     z-index: 2;
     background-color: #fff;
     transform: translateX(-245px);
@@ -619,10 +635,53 @@ a.envelope-link:hover {
     transform: translateY(-4px);
 }
 
+.table-container {
+    margin-top: -20px;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+table.docs-table {
+    text-align: left;
+    background-color: #fff;
+    border-collapse: collapse;
+    overflow: hidden;
+    margin: 25px 0;
+    min-width: 400px;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.docs-table thead tr {
+    font-size: 1.2em;
+    font-weight: bold;
+    border-bottom: 5px solid #e7ecef;
+}
+
+.docs-table th,
+.docs-table td {
+    padding: 10px 15px;
+    max-width: 200px;
+}
+
+.docs-table tbody tr {
+    border-bottom: 4px solid #e7ecef;
+}
+
+.docs-table tbody tr:last-of-type {
+    border-bottom: 3px solid rgba(143, 215, 251, 0.4);
+}
+
+.docs-table tbody tr:nth-of-type(even) {
+    background-color: #f5f5f5;
+}
+
 .alert-container {
     display: flex;
     justify-content: center;
-    animation: fadeOut 10s forwards;
+    animation: fadeOut 20s forwards;
 }
 
 .alert {
@@ -630,7 +689,7 @@ a.envelope-link:hover {
     position: absolute;
     width: 50%;
     margin-top: 2rem;
-    z-index: 10;
+    z-index: 100;
     background-color: #fff;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     font-size: 1.1em;
@@ -763,5 +822,3 @@ a.envelope-link:hover {
         transform: scale(0.9);
     }
 } */
-
-

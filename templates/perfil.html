@@ -46,22 +46,52 @@
 </li>
 {% endif %} {% endblock %} {% block body %}
 <div class="card-container">
-	<div class="card-perfil">
-		<h3>E-mail: {{usuario.email}}</h3>
-		<h3>Nome: {{usuario.nome}}</h3>
-		<h3>Cargo: {{usuario.cargo}}</h3>
-		{% if usuario.nivelCargo %}
-		<h3>Nível do Cargo: {{ nivelCargo[usuario.nivelCargo] }}</h3>
-		{% endif %}
-		<h3>Área: {{usuario.area}}</h3>
-		<h3>Divisão: {{usuario.divisao}}</h3>
-		{% if usuario.nivelCargo %}
-		<br />
-		<br />
-		<a href="{{url_for('editarUsuario', token = token)}}" class="perfil-button">Atualizar Cadastro</a>
-		<br />
-		<br />
-		<a href="{{url_for('redefinirSenhaLogin', token = token)}}" class="perfil-button">Alterar Senha</a>
-	</div>
+    <div class="card-perfil">
+        <div>
+            <p>
+                <span class="title">E-mail:</span>
+                <span class="content">{{usuario.email}}</span>
+            </p>
+            <p>
+                <span class="title">Nome:</span>
+                <span class="content">{{usuario.nome}}</span>
+            </p>
+            <p>
+                <span class="title">Cargo:</span>
+                <span class="content">{{usuario.cargo}}</span>
+            </p>
+            {% if usuario.nivelCargo %}
+            <p>
+                <span class="title">Nível do Cargo:</span>
+                <span class="content"
+                    >{{ nivelCargo[usuario.nivelCargo] }}</span
+                >
+            </p>
+            {% endif %}
+            <p>
+                <span class="title">Área:</span>
+                <span class="content">{{usuario.area}}</span>
+            </p>
+            <p>
+                <span class="title">Divisão:</span>
+                <span class="content">{{usuario.divisao}}</span>
+            </p>
+        </div>
+        {% if usuario.nivelCargo %}
+        <br />
+        <br />
+        <a
+            href="{{url_for('editarUsuario', token = token)}}"
+            class="perfil-button"
+            >Atualizar Cadastro</a
+        >
+        <br />
+        <br />
+        <a
+            href="{{url_for('redefinirSenhaLogin', token = token)}}"
+            class="perfil-button"
+            >Alterar Senha</a
+        >
+    </div>
 </div>
 {% endif %} {% endblock %}

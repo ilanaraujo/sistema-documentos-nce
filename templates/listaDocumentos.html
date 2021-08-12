@@ -1,63 +1,90 @@
-{% extends "base.html" %}
-
-{% block head %}
+{% extends "base.html" %} {% block head %}
 <title>Cadastro de Documentos</title>
-{% endblock %}
-
-{% block header %}
-<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
+{% endblock %} {% block header %}
+<li class="sidenav__list-item">
+    <a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a>
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('criarDocumento', token = token)}}" class="bottom"
+        >Criar Documento</a
+    >
+</li>
 
 {% if tipo == "oficio" %}
-<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom current">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaOficios', token = token)}}" class="bottom current"
+        >Ofícios</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaComInternas', token = token)}}" class="bottom"
+        >Comunicações Internas</a
+    >
+</li>
 
 {% else %}
-<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom current">Comunicações Internas</a></li>
-{% endif %}
-
-{% endblock %}
-
-
-{% block body %}
-{% if tipo == "oficio"%}
+<li class="sidenav__list-item">
+    <a href="{{url_for('listaOficios', token = token)}}" class="bottom"
+        >Ofícios</a
+    >
+</li>
+<li class="sidenav__list-item">
+    <a
+        href="{{url_for('listaComInternas', token = token)}}"
+        class="bottom current"
+        >Comunicações Internas</a
+    >
+</li>
+{% endif %} {% endblock %} {% block body %} {% if tipo == "oficio"%}
 <h1 align="center">Lista de Ofícios</h1>
 {% else %}
 <h1 align="center">Lista de Comunicações Internas</h1>
 {% endif %}
-<table border="2" align="center">
-    <tr>
-        <th>nº/Ano</th>
-        <th>Emissor</th>
-        <th>Cargo</th>
-        <th>Área</th>
-        <th>Destinatário</th>
-        <th>Assunto</th>
-        <th>Observação</th>
-        <th>Data</th>
-        <th>Ações</th>
-    </tr>
-    {% for doc in documentos %}
-    <tr>
-        <!-- colocar número/data ao invés do id -->
-        <td>{{ '{}/{}'.format(doc.id,doc.ano) }}</td>
-        <td>{{ doc.emissor }}</td>
-        <td>{{ doc.cargo }}</td>
-        <td>{{ doc.area }}</td>
-        <td>{{ doc.destinatario }}</td>
-        <td>{{ doc.assunto }}</td>
-        <td>{{ doc.observacao }}</td>
-        <td>{{ doc.data.date() }}</td>
-
-        <td>
-          <a href="{{url_for('editarDocumento', token = token, tipo = tipo, id = doc.id)}}" target="_blank" class="docs-button">Editar</a>
- 	        <br>
-          <a href="{{url_for('baixarDocumento', token = token, tipo = tipo, id = doc.id)}}" target="_blank" class="docs-button">Baixar</a>
-        </td>
-        </tr>
-    {% endfor %}
-</table>
+<div class="table-container">
+    <table class="docs-table" style="overflow-x: auto;">
+        <thead>
+            <tr>
+                <th>nº/Ano</th>
+                <th>Emissor</th>
+                <th>Cargo</th>
+                <th>Área</th>
+                <th>Destinatário</th>
+                <th>Assunto</th>
+                <th>Observação</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documentos %}
+            <tr>
+                <td>{{ '{}/{}'.format(doc.id,doc.ano) }}</td>
+                <td>{{ doc.emissor }}</td>
+                <td>{{ doc.cargo }}</td>
+                <td>{{ doc.area }}</td>
+                <td>{{ doc.destinatario }}</td>
+                <td>{{ doc.assunto }}</td>
+                <td>{{ doc.observacao }}</td>
+                <td>{{ doc.data.date() }}</td>
+    
+                <td>
+                    <a
+                        href="{{url_for('editarDocumento', token = token, tipo = tipo, id = doc.id)}}"
+                        target="_blank"
+                        class="docs-button"
+                        >Editar</a
+                    >
+                    <br />
+                    <a
+                        href="{{url_for('baixarDocumento', token = token, tipo = tipo, id = doc.id)}}"
+                        target="_blank"
+                        class="docs-button"
+                        >Baixar</a
+                    >
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
-
-
