@@ -460,20 +460,21 @@ def listaOficios(token, usuario_logado):
     # Chefia de área
     elif usuario_logado.nivelCargo == 2:
         for doc in oficios:
-            if not (doc.area == area or nome == (doc.autor or doc.emissor)):
+            if not ((doc.area == area) or (nome == doc.autor) or (nome == doc.emissor)):
                 oficios.remove(doc)
 
     # Chefia de divisão
     elif usuario_logado.nivelCargo == 3:
         for doc in oficios:
-            if not ((doc.area == area and doc.divisao == divisao) or nome == (doc.emissor or doc.autor)):
+            if not (((doc.area == area) and (doc.divisao == divisao)) or (nome == doc.emissor) or (nome == doc.autor)):
                 oficios.remove(doc)
 
     # Funcionário comum
     else:
         for doc in oficios:
-            if not nome == (doc.emissor or doc.autor):
+            if not ((nome == doc.emissor) or (nome == doc.autor)):
                 oficios.remove(doc)
+
     return render_template('listaDocumentos.html', token = token, documentos = oficios, tipo = "oficio")
 
 @app.route("/listacomunicacoesinternas", methods=['POST', 'GET'])
@@ -492,20 +493,21 @@ def listaComInternas(token, usuario_logado):
     # Chefia de área
     elif usuario_logado.nivelCargo == 2:
         for doc in comInternas:
-            if not (doc.area == area or nome == (doc.autor or doc.emissor)):
+            if not ((doc.area == area) or (nome == doc.autor) or (nome == doc.emissor)):
                 comInternas.remove(doc)
 
     # Chefia de divisão
     elif usuario_logado.nivelCargo == 3:
         for doc in comInternas:
-            if not ((doc.area == area and doc.divisao == divisao) or nome == (doc.emissor or doc.autor)):
+            if not (((doc.area == area) and (doc.divisao == divisao)) or (nome == doc.emissor) or (nome == doc.autor)):
                 comInternas.remove(doc)
 
     # Funcionário comum
     else:
         for doc in comInternas:
-            if not nome == (doc.emissor or doc.autor):
+            if not ((nome == doc.emissor) or (nome == doc.autor)):
                 comInternas.remove(doc)
+                
     return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna")
 
 # Página para a alteração dos dados de um ofício existentente
