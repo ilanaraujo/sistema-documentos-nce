@@ -505,7 +505,7 @@ def listaComInternas(token, usuario_logado):
     # Funcionário comum
     else:
         for doc in comInternas:
-            if not ((nome == doc.emissor) or (nome == doc.autor):
+            if not ((nome == doc.emissor) or (nome == doc.autor)):
                 comInternas.remove(doc)
                 
     return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna")
