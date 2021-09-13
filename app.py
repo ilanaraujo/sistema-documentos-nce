@@ -87,7 +87,7 @@ class usuarioEditado(db.Model):
     nivelCargo = db.Column(db.Integer)
     area = db.Column(db.String(30))
     divisao = db.Column(db.String(30))
-
+    
 # Ofício
 class oficio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -99,6 +99,8 @@ class oficio(db.Model):
     destinatario = db.Column(db.String(100))
     data = db.Column(db.DateTime, default=datetime.utcnow)
     mensagem = db.Column(db.String(1000))
+    divisao = db.Column(db.String(1000))
+    observacao = db.Column(db.String(1000))
     ano = datetime.now().year
     # Retorna a id do oficio que acaba de ser gerado
     def __repr__(self):
@@ -115,6 +117,8 @@ class comInterna(db.Model):
     destinatario = db.Column(db.String(100))
     data = db.Column(db.DateTime, default=datetime.utcnow)
     mensagem = db.Column(db.String(1000))
+    divisao = db.Column(db.String(1000))
+    observacao = db.Column(db.String(1000))
     ano = datetime.now().year
     # Retorna a id do oficio que acaba de ser gerado
     def __repr__(self):
@@ -403,7 +407,7 @@ def criarDocumento(token, usuario_logado):
         cargo = request.form['cargo']
         assunto = request.form['assunto']
         mensagem = request.form['mensagem']
-
+        observacao = request.form['observacao']
         # Criando um novo ofício
         if(tipo == "oficio"):
             doc = oficio(
@@ -412,7 +416,9 @@ def criarDocumento(token, usuario_logado):
                 destinatario = destinatario,
                 cargo = cargo,
                 assunto = assunto,
-                mensagem = mensagem
+                mensagem = mensagem,
+                autor = autor,
+                observacao = observacao
             )
 
         # Criando uma nova comunicação interna
@@ -423,7 +429,9 @@ def criarDocumento(token, usuario_logado):
                 destinatario = destinatario,
                 cargo = cargo,
                 assunto = assunto,
-                mensagem = mensagem
+                mensagem = mensagem,
+                autor = autor,
+                observacao = observacao
             )
 
         # Salva as informações do novo documento no 
@@ -458,19 +466,19 @@ def listaOficios(token, usuario_logado):
         pass
 
     # Chefia de área
-    elif usuario_logado.nivelCargo == 2:
+    if usuario_logado.nivelCargo == 2:
         for doc in oficios:
             if not ((doc.area == area) or (nome == doc.autor) or (nome == doc.emissor)):
                 oficios.remove(doc)
 
     # Chefia de divisão
-    elif usuario_logado.nivelCargo == 3:
+    if usuario_logado.nivelCargo == 3:
         for doc in oficios:
             if not (((doc.area == area) and (doc.divisao == divisao)) or (nome == doc.emissor) or (nome == doc.autor)):
                 oficios.remove(doc)
 
     # Funcionário comum
-    else:
+    if usuario_logado.nivelCargo == 4:
         for doc in oficios:
             if not ((nome == doc.emissor) or (nome == doc.autor)):
                 oficios.remove(doc)
@@ -493,7 +501,7 @@ def listaComInternas(token, usuario_logado):
     # Chefia de área
     elif usuario_logado.nivelCargo == 2:
         for doc in comInternas:
-            if not ((doc.area == area) or (nome == doc.autor) or (nome == doc.emissor)):
+            if  (doc.area != area) or (nome != doc.emissor or nome != doc.autor) :
                 comInternas.remove(doc)
 
     # Chefia de divisão
@@ -505,7 +513,7 @@ def listaComInternas(token, usuario_logado):
     # Funcionário comum
     else:
         for doc in comInternas:
-            if not ((nome == doc.emissor) or (nome == doc.autor)):
+            if  ((nome != doc.emissor) or (nome != doc.autor)):
                 comInternas.remove(doc)
                 
     return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna")
