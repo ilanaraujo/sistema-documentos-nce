@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block header %}
-<li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
-<li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
+  <li class="sidenav__list-item"><a href="{{url_for('perfil', token = token)}}" class="bottom">Perfil</a></li>
+  <li class="sidenav__list-item"><a href="{{url_for('criarDocumento', token = token)}}" class="bottom">Criar Documento</a></li>
+  <li class="sidenav__list-item"><a href="{{url_for('listaOficios', token = token)}}" class="bottom">Ofícios</a></li>
+  <li class="sidenav__list-item"><a href="{{url_for('listaComInternas', token = token)}}" class="bottom">Comunicações Internas</a></li>
 {% endblock %}
 
 {% block body %}
@@ -25,7 +25,7 @@
         <label class="field a-field a-field_a2">
           <input name="nome" type="text" 
           class="field__input a-field__input" 
-	  placeholder="Nome Completo" value="{{user.nome}}" required>
+	        placeholder="Nome Completo" value="{{user.nome}}" required>
 
           <span class="a-field__label-wrap">
             <span class="a-field__label">Nome Completo</span>
@@ -34,23 +34,19 @@
         
 	<!-- Nível do cargo -->
 	<label class="document-type" align="left">
-	  <a>Tipo de Cargo</a>
-	  <br>
-	  <input type="radio" id="direcaoGeral" name="nivelCargo" value="1" required >
-	  <label for="direcaoGeral" {% if user.nivelCargo == "direcaoGeral" %}
-	  checked {% endif %}>Direção Geral</label>
-	  <br>
-	  <input type="radio" id="direcaoArea" name="nivelCargo" value="2">
-	  <label for="direcaoArea" {% if user.nivelCargo == "" %}
-	  checked {% endif %}>Direção de Área</label>
-	  <br>
-	  <input type="radio" id="chefiaDivisao" name="nivelCargo" value="3">
-	  <label for="chefiaDivisao" {% if user.nivelCargo == "" %}
-	  checked {% endif %}>Chefia de Divisão</label>
-	  <br>
-	  <input type="radio" id="funcionario" name="nivelCargo" value="4">
-	  <label for="funcionario" {% if user.nivelCargo == "" %}
-	  checked {% endif %}>Outro</label>
+      <a>Tipo de Cargo</a>
+      <br>
+        <input type="radio" id="direcaoGeral" name="nivelCargo" value="1" required >
+        <label for="direcaoGeral">Direção Geral</label>
+        <br>
+        <input type="radio" id="direcaoArea" name="nivelCargo" value="2">
+        <label for="direcaoArea">Direção de Área</label>
+        <br>
+        <input type="radio" id="chefiaDivisao" name="nivelCargo" value="3">
+        <label for="chefiaDivisao">Chefia de Divisão</label>
+        <br>
+        <input type="radio" id="funcionario" name="nivelCargo" value="4">
+        <label for="funcionario">Outro</label>
 	</label>
 
         <!-- cargo -->
