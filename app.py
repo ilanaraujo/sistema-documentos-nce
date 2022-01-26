@@ -1,4 +1,5 @@
 # Funções importadas da biblioteca padrão do Flask
+from operator import and_, or_
 from flask import Flask, request, render_template, redirect, url_for, session, make_response, flash
 
 # Utilizada para gerar o PDF
@@ -400,7 +401,7 @@ def criarDocumento(token, usuario_logado):
     if request.method == 'POST':
         # Recebe as informações passadas pelo usuário no formulário
         tipo = request.form['tipo']
-        area = usuario_logado.area
+        area = request.form['area']
         emissor = request.form['emissor']
         autor = usuario_logado.nome
         destinatario = request.form['destinatario']
@@ -408,6 +409,7 @@ def criarDocumento(token, usuario_logado):
         assunto = request.form['assunto']
         mensagem = request.form['mensagem']
         observacao = request.form['observacao']
+        divisao = request.form['divisao']
         # Criando um novo ofício
         if(tipo == "oficio"):
             doc = oficio(
@@ -418,7 +420,8 @@ def criarDocumento(token, usuario_logado):
                 assunto = assunto,
                 mensagem = mensagem,
                 autor = autor,
-                observacao = observacao
+                observacao = observacao,
+                divisao = divisao
             )
 
         # Criando uma nova comunicação interna
@@ -431,7 +434,8 @@ def criarDocumento(token, usuario_logado):
                 assunto = assunto,
                 mensagem = mensagem,
                 autor = autor,
-                observacao = observacao
+                observacao = observacao,
+                divisao = divisao
             )
 
         # Salva as informações do novo documento no 
@@ -460,28 +464,23 @@ def listaOficios(token, usuario_logado):
     nome = usuario_logado.nome
     area = usuario_logado.area
     divisao = usuario_logado.divisao
-
+    nivelCargo = usuario_logado.nivelCargo
     # Direção Geral
-    if usuario_logado.nivelCargo == 1:
+    if nivelCargo == 1:
         pass
 
     # Chefia de área
-    if usuario_logado.nivelCargo == 2:
-        for doc in oficios:
-            if not ((doc.area == area) or (nome == doc.autor) or (nome == doc.emissor)):
-                oficios.remove(doc)
+    if nivelCargo == 2:
+        oficios = oficio.query.filter(or_(or_(oficio.emissor == nome, oficio.autor == nome), oficio.area == area))
 
     # Chefia de divisão
-    if usuario_logado.nivelCargo == 3:
-        for doc in oficios:
-            if not (((doc.area == area) and (doc.divisao == divisao)) or (nome == doc.emissor) or (nome == doc.autor)):
-                oficios.remove(doc)
+    if nivelCargo == 3:
+        oficios = oficio.query.filter(or_(or_(and_(oficio.area == area, oficio.divisao == divisao), oficio.autor == nome), oficio.emissor == nome))
 
+    
     # Funcionário comum
-    if usuario_logado.nivelCargo == 4:
-        for doc in oficios:
-            if not ((nome == doc.emissor) or (nome == doc.autor)):
-                oficios.remove(doc)
+    if nivelCargo == 4:
+        oficios = oficio.query.filter(or_(oficio.emissor == nome, oficio.autor == nome))
 
     return render_template('listaDocumentos.html', token = token, documentos = oficios, tipo = "oficio")
 
@@ -493,29 +492,24 @@ def listaComInternas(token, usuario_logado):
     nome = usuario_logado.nome
     area = usuario_logado.area
     divisao = usuario_logado.divisao
-
+    nivelCargo = usuario_logado.nivelCargo
     # Direção Geral
-    if usuario_logado.nivelCargo == 1:
+    if nivelCargo == 1:
         pass
 
     # Chefia de área
-    elif usuario_logado.nivelCargo == 2:
-        for doc in comInternas:
-            if  (doc.area != area) or (nome != doc.emissor or nome != doc.autor) :
-                comInternas.remove(doc)
+    if nivelCargo == 2:
+        comInternas = comInterna.query.filter(or_(or_(comInterna.emissor == nome, comInterna.autor == nome), comInterna.area == area))
 
     # Chefia de divisão
-    elif usuario_logado.nivelCargo == 3:
-        for doc in comInternas:
-            if not (((doc.area == area) and (doc.divisao == divisao)) or (nome == doc.emissor) or (nome == doc.autor)):
-                comInternas.remove(doc)
+    if nivelCargo == 3:
+        comInternas = comInterna.query.filter(or_(or_(and_(comInterna.area == area, comInterna.divisao == divisao), comInterna.autor == nome), comInterna.emissor == nome))
 
+    
     # Funcionário comum
-    else:
-        for doc in comInternas:
-            if  ((nome != doc.emissor) or (nome != doc.autor)):
-                comInternas.remove(doc)
-                
+    if nivelCargo == 4:
+        comInternas = comInterna.query.filter(or_(comInterna.emissor == nome, comInterna.autor == nome))
+
     return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna")
 
 # Página para a alteração dos dados de um ofício existentente
