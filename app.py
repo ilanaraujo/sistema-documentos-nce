@@ -527,6 +527,7 @@ def editarDocumento(token, usuario_logado, tipo, id):
         doc.cargo = request.form['cargo']
         doc.assunto = request.form['assunto']
         doc.mensagem = request.form['mensagem']
+        doc.divisao = request.form['divisao']
         try:
             db.session.commit()
             if tipo == 'oficio':
