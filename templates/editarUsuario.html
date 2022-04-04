@@ -35,17 +35,22 @@
 	<!-- Nível do cargo -->
 	<label class="document-type" align="left">
       <a>Tipo de Cargo</a>
+      <p>{{user.nivelCargo}}</p>
       <br>
-        <input type="radio" id="direcaoGeral" name="nivelCargo" value="1" required >
+        <input type="radio" id="direcaoGeral" name="nivelCargo" value="1" required 
+          {% if user.nivelCargo==1 %}checked{% endif %} >
         <label for="direcaoGeral">Direção Geral</label>
         <br>
-        <input type="radio" id="direcaoArea" name="nivelCargo" value="2">
+        <input type="radio" id="direcaoArea" name="nivelCargo" value="2"
+        {% if user.nivelCargo==2 %}checked{% endif %}>
         <label for="direcaoArea">Direção de Área</label>
         <br>
-        <input type="radio" id="chefiaDivisao" name="nivelCargo" value="3">
+        <input type="radio" id="chefiaDivisao" name="nivelCargo" value="3"
+        {% if user.nivelCargo==3 %}checked{% endif %}>
         <label for="chefiaDivisao">Chefia de Divisão</label>
         <br>
-        <input type="radio" id="funcionario" name="nivelCargo" value="4">
+        <input type="radio" id="funcionario" name="nivelCargo" value="4"
+        {% if user.nivelCargo==4 %}checked{% endif %}>
         <label for="funcionario">Outro</label>
 	</label>
 
