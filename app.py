@@ -339,7 +339,7 @@ def redefinirSenha(email):
 @token_todos
 def perfil(token, usuario_logado):
     cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-    return render_template('perfil.html', nivelCargo = cargos, usuario = usuario_logado, token = token)
+    return render_template('perfil.html', nivelCargo = cargos, usuario = usuario_logado, token = token, login = True)
 
 # Página para redefinir a senha estando logado
 @app.route('/redefinirsenhalogin', methods = ['GET', 'POST'])
@@ -366,7 +366,7 @@ def redefinirSenhaLogin(token, usuario_logado):
             flash("Ocorreu um erro ao alterar a senha", "error")
         return redirect(url_for('perfil', token = token))
     else:
-        return render_template('redefinirSenha.html', login = True)
+        return render_template('redefinirSenha.html', login = True, token = token)
 
 # Página para a alteração dos dados do usuário logado
 @app.route('/editarusuario', methods=['POST', 'GET'])
@@ -391,7 +391,7 @@ def editarUsuario(token, usuario_logado):
             flash("Ocorreu um erro ao atualizar o cadastro.", "error")
             return redirect(url_for('perfil', token = token))
     else:
-        return render_template('editarUsuario.html', user = usuario_logado, token = token)
+        return render_template('editarUsuario.html', user = usuario_logado, token = token, login = True)
 
 # Página de criação de um novo documento
 @app.route("/criardocumento", methods=['POST', 'GET'])
@@ -453,7 +453,7 @@ def criarDocumento(token, usuario_logado):
 
     # Quando a página é acessada
     else:
-        return render_template('criarDocumento.html', token = token)
+        return render_template('criarDocumento.html', token = token, login = True)
 
 # Página com o histórico de documentos gerados
 @app.route("/listaoficios", methods=['POST', 'GET'])
@@ -482,7 +482,7 @@ def listaOficios(token, usuario_logado):
     if nivelCargo == 4:
         oficios = oficio.query.filter(or_(oficio.emissor == nome, oficio.autor == nome))
 
-    return render_template('listaDocumentos.html', token = token, documentos = oficios, tipo = "oficio")
+    return render_template('listaDocumentos.html', token = token, documentos = oficios, tipo = "oficio", login = True)
 
 @app.route("/listacomunicacoesinternas", methods=['POST', 'GET'])
 @token_normal
@@ -510,7 +510,7 @@ def listaComInternas(token, usuario_logado):
     if nivelCargo == 4:
         comInternas = comInterna.query.filter(or_(comInterna.emissor == nome, comInterna.autor == nome))
 
-    return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna")
+    return render_template('listaDocumentos.html', token = token, documentos = comInternas, tipo = "ComInterna", login = True)
 
 # Página para a alteração dos dados de um ofício existentente
 @app.route('/editardocumento', methods=['GET', 'POST'])
@@ -539,7 +539,7 @@ def editarDocumento(token, usuario_logado, tipo, id):
             flash("Ocorreu um erro ao atualizar as informações do documento.", "error")
             return redirect(url_for('editarDocumento', token = token))
     else:
-        return render_template('editarDocumento.html', token = token, documento = doc)
+        return render_template('editarDocumento.html', token = token, documento = doc, login = True)
 
 # Págna para baixar um ofício existente
 @app.route('/baixardocumento')
@@ -588,7 +588,7 @@ def baixarDocumento(token, usuario_logado, tipo, id):
 def listaUsuarios(token):
     usuarios = usuario.query.order_by(usuario.id).all()
     cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista = "padrao")
+    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista = "padrao", login = True)
 
 # Inativa um usuário aprovado pelo administrador
 @app.route('/inativarusuario')
@@ -631,7 +631,7 @@ def ativarUsuario(token, id):
 def listaUsuariosNovos(token):
     usuarios = usuarioNovo.query.order_by(usuarioNovo.id).all()
     cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista="novo")
+    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista="novo", login = True)
 
 # Aprova um usuário novo, excluíndo-o da lista de usuários não aprovados e adicionando-o
 # à lista de usuários aprovados pelo administrador
@@ -680,7 +680,7 @@ def reprovarCadastro(token, id):
         return redirect(url_for('listaUsuariosNovos', token = token))
     else:
         cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = usuarioReprovado, token = token)
+        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = usuarioReprovado, token = token, login = True)
 
 # Lista de usuários que solicitaram atualização no cadastro
 @app.route('/listausuarioseditados')
@@ -688,7 +688,7 @@ def reprovarCadastro(token, id):
 def listaUsuariosEditados(token):
     usuarios = usuarioEditado.query.order_by(usuarioEditado.id).all()
     cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista = "editado")
+    return render_template('listaUsuarios.html', nivelCargo = cargos, token = token, usuarios = usuarios, lista = "editado", login = True)
 
 # Aprova a atualização no cadastro
 @app.route('/aprovacadastroatualizado')
@@ -734,7 +734,7 @@ def reprovaCadastroAtualizado(token, id):
         return redirect(url_for('listaUsuariosEditados', token = token))
     else:
         cargos = ["Administrador", "Direção geral", "Direção de área", "Chefia de divisão", "Funcionário"]
-        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = cadastroReprovado, token = token)
+        return render_template('reprovarCadastro.html', nivelCargo = cargos, user = cadastroReprovado, token = token, login = True)
 
 # Função pra criar o Usuário Administrador
 def cria_adm():
