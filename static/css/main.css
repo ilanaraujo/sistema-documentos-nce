@@ -55,9 +55,13 @@ header a {
     color: #fff;
 }
 
-.main {
+.main{
     grid-area: main;
     background-color: #e7ecef;
+}
+
+.main.login {
+    overflow: auto;
 }
 
 footer {
@@ -645,8 +649,6 @@ a.envelope-link:hover {
     margin: -20px 1em 0 1em;
     display: flex;
     justify-content: center;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
 table.docs-table {
