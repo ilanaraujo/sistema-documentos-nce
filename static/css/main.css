@@ -85,6 +85,15 @@ footer {
     align-items: center;
 }
 
+footer a{
+    text-decoration: underline; 
+    color: #fff;
+}
+
+footer a:hover {
+    text-decoration: none; 
+}
+
 .sidenav__list {
     padding: 0;
     margin-top: 85px;
@@ -560,10 +569,28 @@ a.user-button:hover {
     --fieldBorderColorActive: #673ab7;
 }
 
+textarea {
+    border: 2px solid #d1c4e9;
+    outline: none;
+    resize: none;
+    font-family: "Special Elite", cursive;
+    font-size: 0.9em;
+}
+
+textarea:focus {
+    border: 2px solid #673ab7;
+}
+
+textarea::placeholder {
+    font-family: "Special Elite", cursive;
+    font-size: 0.9em;
+}
+
 /* '*' for required forms */
 .required {
     color: red;
     font-size: 0.8em;
+    margin-right: 5px;
 }
 
 .required-explanation {
@@ -659,7 +686,7 @@ table.docs-table {
     background-color: #fff;
     border-collapse: collapse;
     overflow: hidden;
-    margin: 25px 0;
+    margin: 2rem 0;
     min-width: 400px;
     border-radius: 5px 5px 0 0;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -829,9 +856,11 @@ table.docs-table {
     position: relative;
 }
 
-/* adapting envelope for screens with smaller heights */
-/* @media only screen and (max-height: 900px) {
-    .envelope-container {
-        transform: scale(0.9);
+adapting envelope for screens with smaller heights */
+@media only screen and (max-height: 400px) {
+    table.docs-table {
+        margin: 2rem 0 0 1000x; 
     }
-} */
+
+    
+} 
