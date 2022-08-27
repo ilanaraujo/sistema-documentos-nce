@@ -46,7 +46,7 @@ header {
 
 header h1 {
     font-style: italic;
-    font-size: 35px;
+    font-size: 2rem;
     color: #fff;
 }
 
@@ -657,6 +657,10 @@ a.form-link:hover {
     color: #000;
 }
 
+#password {
+    margin-bottom: -40px;
+}
+
 a.envelope-link {
     margin-top: 15px;
     font-size: 18px;
@@ -856,11 +860,21 @@ table.docs-table {
     position: relative;
 }
 
-adapting envelope for screens with smaller heights */
-@media only screen and (max-height: 400px) {
-    table.docs-table {
-        margin: 2rem 0 0 1000x; 
+@media only screen and (max-width: 450px) {    
+    footer, a {
+        font-size: 0.9rem!important;
     }
 
-    
-} 
+    header a {
+        font-size: 1.8rem!important;
+    }
+}
+
+/* ajustando tabela */
+@media only screen and (max-width: 1450px) {    
+    .table-container {
+        transform: scale(0.9);
+        margin-left: 15rem; 
+        margin-right: 2rem;
+    }
+}
